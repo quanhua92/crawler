@@ -55,3 +55,6 @@ select = ["E", "F", "I", "UP"]
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 testpaths = ["tests"]
+markers = [
+    "live: tests that make real network requests (skip with -m 'not live')",
+]
