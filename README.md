@@ -145,6 +145,25 @@ curl -H "Authorization: Bearer $KEY" "http://localhost:8321/substack/lennysnewsl
 
 Every live request persists to S3 (RustFS): `{hash}/output.json` (latest good) + `{hash}/versions/{ts}.json` (every fetch). Read archived content via `/archive/...` — mirrors the live routes (e.g. `/archive/x/QwenDevs`, `/archive/url/https://...`). Like Google Cache: when the source is down, the archive still has it. Set `CRAWLER_S3_ENDPOINT=""` to disable.
 
+## Python client
+
+A typed SDK for external projects — async + sync, full type safety via pydantic + httpx:
+
+```bash
+pip install git+https://github.com/quanhua92/crawler.git#subdirectory=client
+```
+
+```python
+from crawler_client import CrawlerClient
+
+async with CrawlerClient("http://localhost:8321", key="sk-xxx") as c:
+    feed = await c.get_x_feed("QwenDevs", limit=10)
+    post = await c.get_x_post("2084102417885585597")
+    replies = await c.get_x_replies("2084102417885585597", limit=20)
+```
+
+See [`client/README.md`](client/README.md) for the full API.
+
 ## License
 
 MIT. See [LICENSE](LICENSE).
