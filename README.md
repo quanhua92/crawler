@@ -12,8 +12,8 @@ FastAPI service, Docker-first. Bring your own keys, run it behind your gateway.
 ```bash
 git clone https://github.com/quanhua92/crawler.git
 cd crawler
-echo "CRAWLER_API_KEYS=sk-$(openssl rand -hex 16)" > .env
-docker compose up --build -d
+echo "CRAWLER_API_KEYS=sk-$(openssl rand -hex 16)" >> .env
+docker compose pull && docker compose up -d
 
 # API use (Bearer header)
 KEY=$(grep CRAWLER_API_KEYS .env | cut -d= -f2)
@@ -21,6 +21,8 @@ curl -H "Authorization: Bearer $KEY" "http://localhost:8321/x/QwenDevs?limit=3"
 ```
 
 Or open `http://localhost:8321/auth` in a browser and paste the key for an interactive cookie session.
+
+To build locally instead of pulling from GHCR: comment out `image:` in `docker-compose.yml`, uncomment `build: .`, then `docker compose up -d --build`.
 
 Without Docker:
 

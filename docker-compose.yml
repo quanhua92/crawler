@@ -1,6 +1,10 @@
 # crawler — standalone docker-compose.
 #
 # Bring up (crawler + RustFS S3):
+#   docker compose pull && docker compose up -d
+#
+# Or build locally:
+#   comment out `image:` in the crawler service, uncomment `build: .`
 #   docker compose up -d --build
 #
 # Tear down:
@@ -10,7 +14,10 @@
 services:
   # ── Crawler API ────────────────────────────────────────────
   crawler:
-    build: .
+    # Use the published image from GHCR (zero build required)
+    image: ghcr.io/quanhua92/crawler:latest
+    # To build locally instead, comment out `image:` above and uncomment:
+    # build: .
     container_name: crawler
     restart: unless-stopped
     env_file: .env
