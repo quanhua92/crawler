@@ -29,8 +29,8 @@ QWEN_STATUS_ID = "2084102417885585597"
 
 
 @pytest.mark.asyncio
-async def test_live_substack_feed():
-    """Real Substack RSS — lennysnewsletter (custom domain fallback)."""
+async def test_live_substack_feed_custom_domain():
+    """Custom-domain blog — lennysnewsletter (name.substack.com → name.com fallback)."""
     posts, source = await substack_src.fetch_feed("lennysnewsletter", limit=3)
     assert len(posts) > 0, "expected at least 1 post from lennysnewsletter"
     assert source == "substack-rss"
@@ -38,6 +38,17 @@ async def test_live_substack_feed():
     assert p.platform == "substack"
     assert p.url.startswith("http")
     assert len(p.text) > 0 or len(p.html or "") > 0
+
+
+@pytest.mark.asyncio
+async def test_live_substack_feed_native_domain():
+    """Native substack.com blog — platformer (no redirect, direct RSS)."""
+    posts, source = await substack_src.fetch_feed("platformer", limit=3)
+    assert len(posts) > 0, "expected at least 1 post from platformer"
+    assert source == "substack-rss"
+    p = posts[0]
+    assert p.platform == "substack"
+    assert p.url.startswith("http")
 
 
 # ─── X feed via Nitter RSS ─────────────────────────────────────
