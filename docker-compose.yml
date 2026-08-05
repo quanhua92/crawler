@@ -18,7 +18,7 @@ services:
       # Docker-network S3 endpoint (overrides .env which may use localhost)
       CRAWLER_S3_ENDPOINT: http://rustfs:9000
     ports:
-      - "0.0.0.0:8000:8000"
+      - "0.0.0.0:8321:8321"
     depends_on:
       rustfs:
         condition: service_healthy

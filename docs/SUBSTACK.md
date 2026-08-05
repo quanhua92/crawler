@@ -36,7 +36,7 @@ The `blog` parameter accepts three forms — crawler figures out the right URL:
 
 ```bash
 curl -H "Authorization: Bearer $KEY" \
-  "http://localhost:8000/substack/platformer?limit=5"
+  "http://localhost:8321/substack/platformer?limit=5"
 ```
 
 Response:
@@ -80,7 +80,7 @@ to `name.com/feed` where the real RSS lives:
 ```bash
 # Lenny uses lennysnewsletter.com — the .substack.com redirect returns HTML
 curl -H "Authorization: Bearer $KEY" \
-  "http://localhost:8000/substack/lennysnewsletter?limit=3"
+  "http://localhost:8321/substack/lennysnewsletter?limit=3"
 # → tries lennysnewsletter.substack.com/feed (HTML, not RSS)
 # → falls back to lennysnewsletter.com/feed (real RSS)
 ```
@@ -100,7 +100,7 @@ Fetches the blog's RSS feed and finds the post matching the slug.
 
 ```bash
 curl -H "Authorization: Bearer $KEY" \
-  "http://localhost:8000/substack/platformer/p/apples-ai-strategy"
+  "http://localhost:8321/substack/platformer/p/apples-ai-strategy"
 ```
 
 **How it works:** Substack RSS entries have URLs like
@@ -124,7 +124,7 @@ no browser — plain HTTP.
 
 ```bash
 curl -H "Authorization: Bearer $KEY" \
-  "http://localhost:8000/substack/platformer/p/why-platformer-is-leaving-substack/comments?limit=10"
+  "http://localhost:8321/substack/platformer/p/why-platformer-is-leaving-substack/comments?limit=10"
 ```
 
 **How it works:**
@@ -158,7 +158,7 @@ source. For profile/blog URLs without a specific post, it returns the feed.
 
 ```bash
 curl -H "Authorization: Bearer $KEY" \
-  "http://localhost:8000/url/https://platformer.substack.com?limit=5"
+  "http://localhost:8321/url/https://platformer.substack.com?limit=5"
 ```
 
 ---
@@ -245,9 +245,9 @@ Every live request persists to S3. Read via `/archive/substack/...`:
 ```bash
 # Latest good snapshot
 curl -H "Authorization: Bearer $KEY" \
-  "http://localhost:8000/archive/substack/platformer"
+  "http://localhost:8321/archive/substack/platformer"
 
 # Point-in-time version
 curl -H "Authorization: Bearer $KEY" \
-  "http://localhost:8000/archive/substack/platformer?version=1722874800"
+  "http://localhost:8321/archive/substack/platformer?version=1722874800"
 ```

@@ -21,7 +21,7 @@
 
 ```
                       ┌─────────────────────────────────────────────┐
-                      │              FastAPI on :8000                │
+                      │              FastAPI on :8321                │
                       │                                             │
    Authorization ─────┼──► verify_auth   (Bearer | itsdangerous)    │
    Cookie ────────────┤         │                                   │
@@ -286,7 +286,7 @@ The service makes **no coverage claims**. It returns what it can fetch and is fu
 
 | Decision | Choice | One-line why |
 |---|---|---|
-| Service shape | FastAPI on `:8000` | matches `ai/` conventions; service not CLI; automate-able |
+| Service shape | FastAPI on `:8321` | matches `ai/` conventions; service not CLI; automate-able |
 | X feed source | Nitter RSS, dynamic instance list | no-auth, no-cost; instances volatile so discover dynamically |
 | X single post | syndication JSON | Nitter-independent escape hatch |
 | Substack | public RSS | trivially available, no antibot |

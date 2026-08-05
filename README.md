@@ -17,17 +17,17 @@ docker compose up --build -d
 
 # API use (Bearer header)
 KEY=$(grep CRAWLER_API_KEYS .env | cut -d= -f2)
-curl -H "Authorization: Bearer $KEY" "http://localhost:8000/x/QwenDevs?limit=3"
+curl -H "Authorization: Bearer $KEY" "http://localhost:8321/x/QwenDevs?limit=3"
 ```
 
-Or open `http://localhost:8000/auth` in a browser and paste the key for an interactive cookie session.
+Or open `http://localhost:8321/auth` in a browser and paste the key for an interactive cookie session.
 
 Without Docker:
 
 ```bash
 pip install -e ".[dev]"
 python -m camoufox fetch && patchright install chromium   # ~300MB browser binaries
-uvicorn app.main:app --port 8000 --reload
+uvicorn app.main:app --port 8321 --reload
 ```
 
 ## What it does
@@ -73,9 +73,9 @@ All `GET`, all accept `?limit ?since ?until ?engine=auto|http|browser ?format=js
 Examples:
 
 ```bash
-curl -H "Authorization: Bearer $KEY" http://localhost:8000/x/status/2084102417885585597
-curl -H "Authorization: Bearer $KEY" "http://localhost:8000/url/https://nitter.net/QwenDevs/rss"
-curl -H "Authorization: Bearer $KEY" "http://localhost:8000/substack/lennysnewsletter?limit=5"
+curl -H "Authorization: Bearer $KEY" http://localhost:8321/x/status/2084102417885585597
+curl -H "Authorization: Bearer $KEY" "http://localhost:8321/url/https://nitter.net/QwenDevs/rss"
+curl -H "Authorization: Bearer $KEY" "http://localhost:8321/substack/lennysnewsletter?limit=5"
 ```
 
 ## Environment

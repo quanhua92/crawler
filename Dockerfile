@@ -24,9 +24,9 @@ RUN patchright install chromium || echo "patchright install skipped (will retry 
 
 COPY app/ ./app/
 
-EXPOSE 8000
+EXPOSE 8321
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-    CMD curl -fsS http://127.0.0.1:8000/health || exit 1
+    CMD curl -fsS http://127.0.0.1:8321/health || exit 1
 
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8321"]

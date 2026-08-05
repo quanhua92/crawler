@@ -32,7 +32,7 @@ instances until one returns real items, slices to `limit`.
 
 ```bash
 curl -H "Authorization: Bearer $KEY" \
-  "http://localhost:8000/x/QwenDevs?limit=10"
+  "http://localhost:8321/x/QwenDevs?limit=10"
 ```
 
 Response:
@@ -78,7 +78,7 @@ When `limit > 20`, the browser tier activates automatically:
 
 ```bash
 curl -H "Authorization: Bearer $KEY" \
-  "http://localhost:8000/x/QwenDevs?limit=50"
+  "http://localhost:8321/x/QwenDevs?limit=50"
 ```
 
 **Why rotation?** Each Nitter instance is run by a different operator with
@@ -102,7 +102,7 @@ embed-widget backend. No auth, no antibot, no Nitter dependency.
 
 ```bash
 curl -H "Authorization: Bearer $KEY" \
-  "http://localhost:8000/x/status/2084102417885585597"
+  "http://localhost:8321/x/status/2084102417885585597"
 ```
 
 Response includes `metrics.conversation_count` (total replies) even though the
@@ -143,7 +143,7 @@ root, fetching each parent via syndication JSON. Returns `[newest, ..., root]`.
 
 ```bash
 curl -H "Authorization: Bearer $KEY" \
-  "http://localhost:8000/x/status/2084665356703195433/thread"
+  "http://localhost:8321/x/status/2084665356703195433/thread"
 ```
 
 **When to use:** You have a reply and want to see the full conversation context
@@ -168,7 +168,7 @@ Flow:
 
 ```bash
 curl -H "Authorization: Bearer $KEY" \
-  "http://localhost:8000/x/status/2084102417885585597/replies?limit=50"
+  "http://localhost:8321/x/status/2084102417885585597/replies?limit=50"
 ```
 
 **Why browser?** No free HTTP endpoint exposes tweet replies:
@@ -214,7 +214,7 @@ For X URLs: status URLs go to syndication JSON; profile URLs go to Nitter RSS.
 ```bash
 # Force browser even for a simple feed (useful when all RSS instances are down)
 curl -H "Authorization: Bearer $KEY" \
-  "http://localhost:8000/x/QwenDevs?limit=10&engine=browser"
+  "http://localhost:8321/x/QwenDevs?limit=10&engine=browser"
 ```
 
 ---
@@ -286,13 +286,13 @@ Read archived content via the `/archive/x/...` mirror routes:
 ```bash
 # Latest good snapshot
 curl -H "Authorization: Bearer $KEY" \
-  "http://localhost:8000/archive/x/QwenDevs"
+  "http://localhost:8321/archive/x/QwenDevs"
 
 # Point-in-time version
 curl -H "Authorization: Bearer $KEY" \
-  "http://localhost:8000/archive/x/QwenDevs?version=1722874800"
+  "http://localhost:8321/archive/x/QwenDevs?version=1722874800"
 
 # List all archived versions
 curl -H "Authorization: Bearer $KEY" \
-  "http://localhost:8000/archive/x/QwenDevs/versions"
+  "http://localhost:8321/archive/x/QwenDevs/versions"
 ```

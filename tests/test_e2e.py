@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """End-to-end smoke tests for the crawler service.
 
-Runs against a live deployed crawler instance (default localhost:8000).
+Runs against a live deployed crawler instance (default localhost:8321).
 Each scenario prints a clear [PASS]/[FAIL] with useful detail.
 
 Usage:
-    python3 tests/test_e2e.py                              # all scenarios vs localhost:8000
-    python3 tests/test_e2e.py --base http://my-host:8000   # vs a deployed URL
+    python3 tests/test_e2e.py                              # all scenarios vs localhost:8321
+    python3 tests/test_e2e.py --base http://my-host:8321   # vs a deployed URL
     python3 tests/test_e2e.py --key sk-mykey               # with API key
     python3 tests/test_e2e.py --only substack,x-post       # run only these scenarios
     python3 tests/test_e2e.py --skip replies               # skip these
@@ -23,7 +23,7 @@ import time
 import urllib.error
 import urllib.request
 
-DEFAULT_BASE = "http://localhost:8000"
+DEFAULT_BASE = "http://localhost:8321"
 
 _passed = 0
 _failed = 0
@@ -355,7 +355,7 @@ Scenarios:
 
 Examples:
   python3 tests/test_e2e.py
-  python3 tests/test_e2e.py --base http://crawler.example.com:8000 --key sk-abc
+  python3 tests/test_e2e.py --base http://crawler.example.com:8321 --key sk-abc
   python3 tests/test_e2e.py --only health,x-feed,x-post
   python3 tests/test_e2e.py --skip x-replies,archive
 """,
