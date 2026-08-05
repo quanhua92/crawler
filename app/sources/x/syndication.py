@@ -57,7 +57,8 @@ def _parse_tweet(data: dict, source: str = "syndication") -> Post | None:
         )
 
     metrics: dict[str, int] = {}
-    for k in ("favorite_count", "retweet_count", "reply_count", "quote_count", "view_count"):
+    for k in ("favorite_count", "retweet_count", "reply_count",
+              "quote_count", "view_count", "conversation_count"):
         if k in data:
             metrics[k] = data[k]
 
