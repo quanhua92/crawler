@@ -17,6 +17,9 @@ services:
     environment:
       # Docker-network S3 endpoint (overrides .env which may use localhost)
       CRAWLER_S3_ENDPOINT: http://rustfs:9000
+      # Default API key — override in .env for production
+      CRAWLER_API_KEYS: ${CRAWLER_API_KEYS:-sk-dev-key-change-me}
+      CRAWLER_SESSION_SECRET: ${CRAWLER_SESSION_SECRET:-dev-secret-change-me}
     ports:
       - "0.0.0.0:8321:8321"
     depends_on:
@@ -42,8 +45,8 @@ services:
       RUSTFS_UNSAFE_BYPASS_DISK_CHECK: "true"
       RUSTFS_OBS_LOGGER_LEVEL: info
     ports:
-      - "0.0.0.0:9000:9000"
-      - "0.0.0.0:9001:9001"   # web console
+      - "0.0.0.0:9002:9000"
+      - "0.0.0.0:9003:9001"   # web console
     volumes:
       - crawler_rustfs:/data
     healthcheck:

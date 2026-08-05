@@ -14,7 +14,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 WORKDIR /app
 
 # Install uv for fast dependency resolution
-COPY pyproject.toml .
+COPY pyproject.toml README.md LICENSE ./
 RUN pip install --no-cache-dir uv && \
     uv pip install --system --no-cache .
 

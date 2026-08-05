@@ -1,0 +1,126 @@
+
+############################################################
+  crawler e2e — http://localhost:8321
+  key: ✓ set
+  scenarios: health, auth-required, auth-page, x-feed, x-post, x-thread, substack-native, substack-custom, substack-comments, url-x, url-web, instances, archive
+############################################################
+
+============================================================
+  Health check
+============================================================
+  engine=camoufox browser=True archive=True public=False
+  [PASS] Health check (0.0s)
+
+============================================================
+  Auth enforcement
+============================================================
+  auth enforced: 401 without key ✓
+  [PASS] Auth enforcement (0.0s)
+
+============================================================
+  Login page (/auth)
+============================================================
+  /auth returns HTML login form ✓
+  [PASS] Login page (/auth) (0.0s)
+
+============================================================
+  X feed (Nitter RSS)
+============================================================
+  3 posts from nitter:nitter.net
+  first post:
+    {
+      "id": "2084665356703195433",
+      "platform": "x",
+      "url": "https://nitter.net/shuai_bai_/status/2084665356703195433#m",
+      "created_at": "2026-08-04T15:38:46Z",
+      "author": {
+        "id": null,
+        "username": "shuai_bai_",
+        "name": null
+      },
+      "title": null,
+      "text": "What does it really mean for an agent to be multimodal-native?\n\nIt should be mor...",
+      "html": "<p>What does it really mean for an agent to be multimodal-native?<br />\n<br />\nI...",
+      "lang": null,
+      "metrics": {},
+      "media": [],
+      "urls": [],
+      "quoted": null,
+      "reply_to": null,
+      "repost_of": {
+        "username": "QwenDevs",
+        "id": "2084665356703195433"
+      },
+      "source": "nitter:nitter.net"
+    }
+  [PASS] X feed (Nitter RSS) (2.1s)
+
+============================================================
+  X single post (syndication)
+============================================================
+  post by @QwenDevs: git init qwen_devs
+
+README.md:
+Hey 👋 We're the folks from Qw...
+  metrics: {'favorite_count': 401, 'conversation_count': 247}
+  [PASS] X single post (syndication) (0.6s)
+
+============================================================
+  X thread walk
+============================================================
+  thread depth: 1 posts
+  [PASS] X thread walk (0.1s)
+
+============================================================
+  Substack feed (native domain)
+============================================================
+  3 posts from substack-rss
+  first post title:
+    "Why Platformer is leaving Substack"
+  [PASS] Substack feed (native domain) (0.3s)
+
+============================================================
+  Substack feed (custom domain)
+============================================================
+  3 posts from substack-rss
+  [PASS] Substack feed (custom domain) (1.2s)
+
+============================================================
+  Substack comments (API)
+============================================================
+  3 comments from substack-comments
+  author: Gordon Strause
+  body: Too bad. I think Substack's policies are the right ones, and I think Casey's bel...
+  [PASS] Substack comments (API) (0.4s)
+
+============================================================
+  URL catch-all (X status)
+============================================================
+  dispatched X status URL → syndication
+  text: git init qwen_devs
+
+README.md:
+Hey 👋 We're the folks from Qw...
+  [PASS] URL catch-all (X status) (0.1s)
+
+============================================================
+  URL catch-all (example.com)
+============================================================
+  fetched example.com → title: Example Domain
+  [PASS] URL catch-all (example.com) (0.2s)
+
+============================================================
+  Instance list
+============================================================
+  8 instances (nitter.net first ✓)
+  [PASS] Instance list (0.0s)
+
+============================================================
+  Archive read
+============================================================
+  archive hit: nitter:nitter.net
+  [PASS] Archive read (0.0s)
+
+────────────────────────────────────────────────────────────
+  13 passed | 0 failed | 13 total
+────────────────────────────────────────────────────────────
