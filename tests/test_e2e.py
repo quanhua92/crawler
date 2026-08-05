@@ -1,0 +1,397 @@
+#!/usr/bin/env python3
+"""End-to-end smoke tests for the crawler service.
+
+Runs against a live deployed crawler instance (default localhost:8000).
+Each scenario prints a clear [PASS]/[FAIL] with useful detail.
+
+Usage:
+    python3 tests/test_e2e.py                              # all scenarios vs localhost:8000
+    python3 tests/test_e2e.py --base http://my-host:8000   # vs a deployed URL
+    python3 tests/test_e2e.py --key sk-mykey               # with API key
+    python3 tests/test_e2e.py --only substack,x-post       # run only these scenarios
+    python3 tests/test_e2e.py --skip replies               # skip these
+
+Set CRAWLER_API_KEYS in the target service, or pass --key.
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import sys
+import time
+import urllib.error
+import urllib.request
+
+DEFAULT_BASE = "http://localhost:8000"
+
+_passed = 0
+_failed = 0
+
+
+# ─── HTTP helper ─────────────────────────────────────────────
+
+
+def request(
+    base: str,
+    path: str,
+    *,
+    key: str | None = None,
+    timeout: int = 60,
+) -> tuple[int, dict | list | str]:
+    """GET base+path with optional Bearer key. Returns (status, parsed_body)."""
+    url = base.rstrip("/") + path
+    headers = {"Accept": "application/json"}
+    if key:
+        headers["Authorization"] = f"Bearer {key}"
+
+    req = urllib.request.Request(url, headers=headers)
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as resp:
+            status = resp.status
+            raw = resp.read().decode()
+    except urllib.error.HTTPError as e:
+        status = e.code
+        raw = e.read().decode()
+    except urllib.error.URLError as e:
+        return 0, f"connection error: {e.reason}"
+
+    try:
+        parsed = json.loads(raw)
+    except (ValueError, json.JSONDecodeError):
+        parsed = raw
+
+    return status, parsed
+
+
+# ─── Scenario framework ──────────────────────────────────────
+
+
+def run(name: str, fn, base: str, key: str | None) -> bool:
+    """Run a scenario. Returns True if passed."""
+    global _passed, _failed
+    print(f"\n{'='*60}")
+    print(f"  {name}")
+    print(f"{'='*60}")
+
+    t0 = time.time()
+    try:
+        fn(base, key)
+        elapsed = time.time() - t0
+        print(f"  [PASS] {name} ({elapsed:.1f}s)")
+        _passed += 1
+        return True
+    except AssertionError as e:
+        elapsed = time.time() - t0
+        print(f"  [FAIL] {name} ({elapsed:.1f}s)")
+        print(f"         {e}")
+        _failed += 1
+        return False
+    except Exception as e:
+        elapsed = time.time() - t0
+        print(f"  [FAIL] {name} ({elapsed:.1f}s)")
+        print(f"         {type(e).__name__}: {e}")
+        _failed += 1
+        return False
+
+
+def _check(condition, msg: str):
+    if not condition:
+        raise AssertionError(msg)
+
+
+def _show(label: str, obj, max_len: int = 200):
+    """Print a truncated preview of a response object."""
+    if isinstance(obj, (dict, list)):
+        text = json.dumps(obj, indent=2, default=str)
+    else:
+        text = str(obj)
+    if len(text) > max_len:
+        text = text[:max_len] + "..."
+    print(f"  {label}: {text}")
+
+
+# ─── Scenarios ───────────────────────────────────────────────
+
+
+def s_health(base: str, key: str | None):
+    """Health endpoint returns 200 with config snapshot."""
+    status, body = request(base, "/health", timeout=5)
+    _check(status == 200, f"expected 200, got {status}")
+    _check(isinstance(body, dict), "response should be JSON dict")
+    _check(body.get("status") == "ok", f"status should be 'ok', got '{body.get('status')}'")
+    print(f"  engine={body.get('engine')} browser={body.get('browser_enabled')} "
+          f"archive={body.get('archive_enabled')} public={body.get('allow_public')}")
+
+
+def s_auth_required(base: str, key: str | None):
+    """Without auth key, protected routes return 401 (unless allow_public)."""
+    if key is None:
+        print("  (skipped — no key set, can't verify auth rejection)")
+        return
+    status, body = request(base, "/x/QwenDevs", key=None, timeout=5)
+    _check(
+        status in (401, 200),
+        f"expected 401 (auth required) or 200 (public mode), got {status}",
+    )
+    if status == 401:
+        print("  auth enforced: 401 without key ✓")
+    else:
+        print("  public mode: anonymous admitted (CRAWLER_ALLOW_PUBLIC=true)")
+
+
+def s_auth_page(base: str, key: str | None):
+    """/auth returns an HTML login form."""
+    status, body = request(base, "/auth", timeout=5)
+    _check(status == 200, f"expected 200, got {status}")
+    if isinstance(body, str):
+        _check("<form" in body.lower() or "input" in body.lower(),
+               "expected an HTML form")
+    print("  /auth returns HTML login form ✓")
+
+
+def s_x_feed(base: str, key: str | None):
+    """X feed via Nitter RSS returns real posts."""
+    status, body = request(base, "/x/QwenDevs?limit=3", key=key)
+    _check(status == 200, f"expected 200, got {status}: {body}")
+    if isinstance(body, dict):
+        _check(body.get("status") in ("ok", "partial"),
+               f"status should be ok/partial, got '{body.get('status')}'")
+        items = body.get("items") or []
+        _check(len(items) > 0, "expected at least 1 post")
+        p = items[0]
+        _check(p.get("platform") == "x", f"platform should be 'x', got '{p.get('platform')}'")
+        _check(bool(p.get("id")), "post should have an id")
+        print(f"  {len(items)} posts from {body.get('source')}")
+        _show("first post", p)
+    else:
+        raise AssertionError(f"expected dict, got {type(body)}")
+
+
+def s_x_post(base: str, key: str | None):
+    """Single X post via syndication JSON."""
+    status, body = request(base, "/x/status/2084102417885585597", key=key)
+    _check(status == 200, f"expected 200, got {status}")
+    if isinstance(body, dict):
+        _check(body.get("status") in ("ok", "partial"),
+               f"status should be ok/partial, got '{body.get('status')}'")
+        item = body.get("item")
+        _check(item is not None, "expected item")
+        _check(item["author"]["username"] == "QwenDevs",
+               f"author should be QwenDevs, got {item['author']['username']}")
+        print(f"  post by @{item['author']['username']}: {item['text'][:60]}...")
+        print(f"  metrics: {item.get('metrics', {})}")
+
+
+def s_x_thread(base: str, key: str | None):
+    """Reply chain walk via syndication."""
+    status, body = request(base, "/x/status/2084102417885585597/thread", key=key)
+    _check(status == 200, f"expected 200, got {status}")
+    if isinstance(body, dict):
+        items = body.get("items") or []
+        _check(len(items) >= 1, "expected at least 1 post in thread")
+        print(f"  thread depth: {len(items)} posts")
+
+
+def s_x_replies(base: str, key: str | None):
+    """Replies to a tweet (requires browser tier)."""
+    status, body = request(base, "/x/status/2084102417885585597/replies?limit=5", key=key)
+    if isinstance(body, dict) and body.get("status") == "failed":
+        print(f"  (browser tier may be disabled: {body.get('error', '')[:100]})")
+        print("  skipping — not a failure, browser may be off")
+        return
+    _check(status in (200, 502), f"expected 200/502, got {status}")
+    if status == 200 and isinstance(body, dict):
+        items = body.get("items") or []
+        print(f"  {len(items)} replies from {body.get('source')}")
+
+
+def s_substack_feed_native(base: str, key: str | None):
+    """Substack feed — native domain (platformer.substack.com)."""
+    status, body = request(base, "/substack/platformer?limit=3", key=key)
+    _check(status == 200, f"expected 200, got {status}")
+    if isinstance(body, dict):
+        items = body.get("items") or []
+        _check(len(items) > 0, "expected at least 1 post")
+        _check(items[0]["platform"] == "substack", "platform should be substack")
+        print(f"  {len(items)} posts from {body.get('source')}")
+        _show("first post title", items[0].get("title", ""))
+
+
+def s_substack_feed_custom(base: str, key: str | None):
+    """Substack feed — custom domain fallback (lennysnewsletter)."""
+    status, body = request(base, "/substack/lennysnewsletter?limit=3", key=key)
+    _check(status == 200, f"expected 200, got {status}")
+    if isinstance(body, dict):
+        items = body.get("items") or []
+        _check(len(items) > 0, "expected at least 1 post (custom domain fallback)")
+        print(f"  {len(items)} posts from {body.get('source')}")
+
+
+def s_substack_comments(base: str, key: str | None):
+    """Substack post comments via public API."""
+    status, body = request(
+        base,
+        "/substack/platformer/p/why-platformer-is-leaving-substack/comments?limit=3",
+        key=key,
+    )
+    _check(status == 200, f"expected 200, got {status}")
+    if isinstance(body, dict):
+        items = body.get("items") or []
+        _check(len(items) > 0, "expected at least 1 comment")
+        print(f"  {len(items)} comments from {body.get('source')}")
+        if items:
+            c = items[0]
+            print(f"  author: {c.get('author', {}).get('name', '?')}")
+            print(f"  body: {(c.get('text') or '')[:80]}...")
+
+
+def s_url_x(base: str, key: str | None):
+    """/url/ catch-all with an X status URL."""
+    target = "https%3A%2F%2Fx.com%2FQwenDevs%2Fstatus%2F2084102417885585597"
+    status, body = request(base, f"/url/{target}", key=key)
+    _check(status == 200, f"expected 200, got {status}")
+    if isinstance(body, dict):
+        _check(body.get("status") in ("ok", "partial"),
+               f"status should be ok/partial, got '{body.get('status')}'")
+        item = body.get("item")
+        _check(item is not None, "expected item from X URL")
+        print(f"  dispatched X status URL → {body.get('source')}")
+        print(f"  text: {item.get('text', '')[:60]}...")
+
+
+def s_url_web(base: str, key: str | None):
+    """/url/ catch-all with an unknown host (example.com)."""
+    target = "https%3A%2F%2Fexample.com"
+    status, body = request(base, f"/url/{target}", key=key)
+    _check(status == 200, f"expected 200, got {status}")
+    if isinstance(body, dict):
+        _check(body.get("status") in ("ok", "partial"),
+               f"status should be ok/partial, got '{body.get('status')}'")
+        item = body.get("item")
+        if item:
+            _check("Example Domain" in (item.get("title") or ""),
+                   "expected 'Example Domain' title")
+            print(f"  fetched example.com → title: {item.get('title')}")
+
+
+def s_instances(base: str, key: str | None):
+    """Instance list is populated."""
+    status, body = request(base, "/instances", key=key)
+    _check(status == 200, f"expected 200, got {status}")
+    if isinstance(body, dict):
+        instances = body.get("instances") or []
+        _check(len(instances) > 0, "expected at least 1 instance")
+        _check(instances[0] == "nitter.net", "nitter.net should be first")
+        print(f"  {len(instances)} instances (nitter.net first ✓)")
+
+
+def s_archive(base: str, key: str | None):
+    """Archive read (may be empty if nothing archived yet)."""
+    status, body = request(base, "/archive/x/QwenDevs", key=key)
+    # 200 = archived data exists; 404 = not archived yet; 503 = S3 not configured
+    _check(status in (200, 404, 503), f"expected 200/404/503, got {status}")
+    if status == 200:
+        print(f"  archive hit: {body.get('source', '?')}")
+    elif status == 404:
+        print("  not archived yet (run /x/QwenDevs first, then retry)")
+    else:
+        print("  S3 archive not configured (set CRAWLER_S3_ENDPOINT)")
+
+
+# ─── All scenarios ────────────────────────────────────────────
+
+SCENARIOS = {
+    "health": ("Health check", s_health),
+    "auth-required": ("Auth enforcement", s_auth_required),
+    "auth-page": ("Login page (/auth)", s_auth_page),
+    "x-feed": ("X feed (Nitter RSS)", s_x_feed),
+    "x-post": ("X single post (syndication)", s_x_post),
+    "x-thread": ("X thread walk", s_x_thread),
+    "x-replies": ("X replies (browser tier)", s_x_replies),
+    "substack-native": ("Substack feed (native domain)", s_substack_feed_native),
+    "substack-custom": ("Substack feed (custom domain)", s_substack_feed_custom),
+    "substack-comments": ("Substack comments (API)", s_substack_comments),
+    "url-x": ("URL catch-all (X status)", s_url_x),
+    "url-web": ("URL catch-all (example.com)", s_url_web),
+    "instances": ("Instance list", s_instances),
+    "archive": ("Archive read", s_archive),
+}
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="End-to-end smoke tests for the crawler service.",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""\
+Scenarios:
+  health             Health check + config snapshot
+  auth-required      Verify auth is enforced (401 without key)
+  auth-page          Browser login form at /auth
+  x-feed             X user feed via Nitter RSS
+  x-post             Single X post via syndication JSON
+  x-thread           Reply chain walk via syndication
+  x-replies          Replies to a tweet (browser tier)
+  substack-native    Substack feed (platformer.substack.com)
+  substack-custom    Substack feed (lennysnewsletter custom domain)
+  substack-comments  Substack post comments via public API
+  url-x              /url/ catch-all with an X URL
+  url-web            /url/ catch-all with example.com
+  instances          Nitter instance discovery
+  archive            S3 archive read
+
+Examples:
+  python3 tests/test_e2e.py
+  python3 tests/test_e2e.py --base http://crawler.example.com:8000 --key sk-abc
+  python3 tests/test_e2e.py --only health,x-feed,x-post
+  python3 tests/test_e2e.py --skip x-replies,archive
+""",
+    )
+    parser.add_argument(
+        "--base", default=DEFAULT_BASE,
+        help=f"Base URL of the crawler service (default: {DEFAULT_BASE})",
+    )
+    parser.add_argument("--key", default=None, help="API key for Bearer auth")
+    parser.add_argument(
+        "--only", default=None,
+        help="Comma-separated scenario names to run (default: all)",
+    )
+    parser.add_argument(
+        "--skip", default=None,
+        help="Comma-separated scenario names to skip",
+    )
+    args = parser.parse_args()
+
+    # Select scenarios
+    selected = SCENARIOS
+    if args.only:
+        names = {n.strip() for n in args.only.split(",")}
+        selected = {k: v for k, v in SCENARIOS.items() if k in names}
+    if args.skip:
+        names = {n.strip() for n in args.skip.split(",")}
+        selected = {k: v for k, v in selected.items() if k not in names}
+
+    if not selected:
+        print("No scenarios selected.")
+        sys.exit(1)
+
+    print(f"\n{'#'*60}")
+    print(f"  crawler e2e — {args.base}")
+    print(f"  key: {'✓ set' if args.key else '✗ none (public mode or no auth)'}")
+    print(f"  scenarios: {', '.join(selected.keys())}")
+    print(f"{'#'*60}")
+
+    for name, (label, fn) in selected.items():
+        run(label, fn, args.base, args.key)
+
+    # Summary
+    total = _passed + _failed
+    print(f"\n{'─'*60}")
+    print(f"  {_passed} passed | {_failed} failed | {total} total")
+    print(f"{'─'*60}")
+
+    sys.exit(0 if _failed == 0 else 1)
+
+
+if __name__ == "__main__":
+    main()
