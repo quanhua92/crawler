@@ -30,9 +30,9 @@ QWEN_STATUS_ID = "2084102417885585597"
 
 @pytest.mark.asyncio
 async def test_live_substack_feed():
-    """Real Substack RSS — platformer.substack.com."""
-    posts, source = await substack_src.fetch_feed("platformer", limit=3)
-    assert len(posts) > 0, "expected at least 1 post from platformer"
+    """Real Substack RSS — lennysnewsletter (custom domain fallback)."""
+    posts, source = await substack_src.fetch_feed("lennysnewsletter", limit=3)
+    assert len(posts) > 0, "expected at least 1 post from lennysnewsletter"
     assert source == "substack-rss"
     p = posts[0]
     assert p.platform == "substack"

@@ -74,15 +74,35 @@ def _entry_to_post(entry, blog: str) -> Post:
 
 
 async def fetch_feed(blog: str, *, limit: int = 20) -> tuple[list[Post], str]:
-    """Fetch a Substack blog's RSS feed. blog can be 'name' or 'name.substack.com'."""
+    """Fetch a Substack blog's RSS feed.
+
+    blog can be 'name', 'name.substack.com', or a custom domain.
+    Handles custom-domain blogs (e.g. Lenny) where name.substack.com/feed
+    redirects to a profile page — falls back to name.com/feed.
+    """
     blog = blog.lstrip("@").removeprefix("https://").removeprefix("http://").split("/")[0]
     if "." not in blog:
         blog = f"{blog}.substack.com"
-    url = f"https://{blog}/feed"
-    status, body = await fetch_text(url)
-    if status != 200 or not body:
-        return [], ""
-    posts = parse_feed(body, blog)
-    if limit > 0:
-        posts = posts[:limit]
-    return posts, "substack-rss"
+
+    # Try the primary feed URL
+    status, body = await fetch_text(f"https://{blog}/feed")
+    if status == 200 and body and _looks_like_rss(body):
+        posts = parse_feed(body, blog)
+        return (posts[:limit] if limit > 0 else posts), "substack-rss"
+
+    # Custom-domain fallback: name.substack.com → name.com
+    # (Lenny, AC10, etc. redirect .substack.com to profile HTML, not RSS)
+    if blog.endswith(".substack.com"):
+        name = blog[: -len(".substack.com")]
+        status2, body2 = await fetch_text(f"https://{name}.com/feed")
+        if status2 == 200 and body2 and _looks_like_rss(body2):
+            posts = parse_feed(body2, blog)
+            return (posts[:limit] if limit > 0 else posts), "substack-rss"
+
+    return [], ""
+
+
+def _looks_like_rss(text: str) -> bool:
+    """Check if the response body is XML/RSS, not an HTML profile page."""
+    head = text.lstrip()[:500].lower()
+    return "<rss" in head or "<?xml" in head or "<feed" in head
