@@ -121,7 +121,7 @@ async def x_replies(
     engine: str = Query("browser"),
     format: str = Query("json"),
 ):
-    """Fetch replies to a tweet (requires browser tier — intercepts x.com GraphQL)."""
+    """Fetch replies to a tweet (browser tier — rotates Nitter/xcancel, x.com last)."""
     try:
         posts = await browser_src.fetch_replies(tweet_id, limit=limit)
     except Exception as e:
