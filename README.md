@@ -67,6 +67,8 @@ All `GET`, all accept `?limit ?since ?until ?engine=auto|http|browser ?format=js
 | `/url/{target:path}` | any URL, best-effort (auto-dispatch by host) |
 | `/x/{handle}` | X user feed (≤20 RSS, >20 browser) |
 | `/x/status/{id}` | single X post |
+
+> **X feed limits:** `?limit≤20` uses Nitter RSS (~1-2s). `?limit>20` auto-switches to the browser tier, which loads the Nitter profile page and scrolls (~8-25s, returns ~20-25 from the first page). Deep pagination beyond ~25 is a future improvement.
 | `/x/status/{id}/thread` | X reply chain (upward) |
 | `/x/status/{id}/replies` | X replies to a post (browser) |
 | `/substack/{blog}` | Substack feed |
