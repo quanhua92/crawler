@@ -309,10 +309,47 @@ def s_archive(base: str, key: str | None):
         print("  S3 archive not configured (set CRAWLER_S3_ENDPOINT)")
 
 
-def s_search(base: str, key: str | None):
-    """Web search via SearXNG or DuckDuckGo."""
+def s_search_ddg(base: str, key: str | None):
+    """Web search via DuckDuckGo (no SearXNG needed)."""
     status, body = request(
         base, "/search?q=python+asyncio&provider=duckduckgo&limit=3", key=key,
+    )
+    if isinstance(body, dict) and body.get("status") == "failed":
+        print(f"  (DDG rate-limited or unavailable: {body.get('error', '')[:80]})")
+        print("  skipping — not a failure, DDG may be rate-limited from datacenter IPs")
+        return
+    _check(status == 200, f"expected 200, got {status}")
+    if isinstance(body, dict):
+        _check(body.get("status") in ("ok", "partial"),
+               f"status should be ok/partial, got '{body.get('status')}'")
+        items = body.get("items") or []
+        _check(len(items) > 0, "expected at least 1 search result")
+        _check(items[0]["platform"] == "search", "platform should be search")
+        _show("response", body)
+
+
+def s_search_searxng(base: str, key: str | None):
+    """Web search via SearXNG (self-hosted, 70+ engines)."""
+    status, body = request(
+        base, "/search?q=python+httpx&provider=searxng&limit=3", key=key,
+    )
+    if isinstance(body, dict) and body.get("status") == "failed":
+        print(f"  (SearXNG not available: {body.get('error', '')[:80]})")
+        print("  skipping — not a failure, SearXNG container may not be running")
+        return
+    _check(status == 200, f"expected 200, got {status}")
+    if isinstance(body, dict):
+        _check(body.get("status") in ("ok", "partial"),
+               f"status should be ok/partial, got '{body.get('status')}'")
+        items = body.get("items") or []
+        _check(len(items) > 0, "expected at least 1 search result")
+        _show("response", body)
+
+
+def s_search_auto(base: str, key: str | None):
+    """Web search with auto provider (SearXNG → DDG fallback)."""
+    status, body = request(
+        base, "/search?q=latest+AI+news&provider=auto&limit=5", key=key,
     )
     _check(status == 200, f"expected 200, got {status}")
     if isinstance(body, dict):
@@ -320,6 +357,24 @@ def s_search(base: str, key: str | None):
                f"status should be ok/partial, got '{body.get('status')}'")
         items = body.get("items") or []
         _check(len(items) > 0, "expected at least 1 search result")
+        _check(body.get("source", "").startswith("search:"),
+               f"source should start with 'search:', got '{body.get('source')}'")
+        _show("response", body)
+
+
+def s_search_news(base: str, key: str | None):
+    """Search news category via SearXNG."""
+    status, body = request(
+        base, "/search?q=AI&provider=searxng&categories=news&limit=3", key=key,
+    )
+    if isinstance(body, dict) and body.get("status") == "failed":
+        print(f"  (news search unavailable: {body.get('error', '')[:80]})")
+        print("  skipping — not a failure")
+        return
+    _check(status == 200, f"expected 200, got {status}")
+    if isinstance(body, dict):
+        items = body.get("items") or []
+        _check(len(items) > 0, "expected at least 1 news result")
         _show("response", body)
 
 
@@ -338,7 +393,10 @@ SCENARIOS = {
     "substack-comments": ("Substack comments (API)", s_substack_comments),
     "url-x": ("URL catch-all (X status)", s_url_x),
     "url-web": ("URL catch-all (example.com)", s_url_web),
-    "search": ("Web search (DDG)", s_search),
+    "search-ddg": ("Search (DuckDuckGo)", s_search_ddg),
+    "search-searxng": ("Search (SearXNG)", s_search_searxng),
+    "search-auto": ("Search (auto fallback)", s_search_auto),
+    "search-news": ("Search (news category)", s_search_news),
     "instances": ("Instance list", s_instances),
     "archive": ("Archive read", s_archive),
 }
@@ -362,6 +420,10 @@ Scenarios:
   substack-comments  Substack post comments via public API
   url-x              /url/ catch-all with an X URL
   url-web            /url/ catch-all with example.com
+  search-ddg          Search via DuckDuckGo (no container)
+  search-searxng      Search via SearXNG (70+ engines)
+  search-auto         Search with auto provider fallback
+  search-news         Search news category
   instances          Nitter instance discovery
   archive            S3 archive read
 

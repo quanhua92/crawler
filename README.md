@@ -9,7 +9,7 @@ FastAPI service, Docker-first. No upstream API keys needed — Nitter, syndicati
 
 ## Test results
 
-Latest e2e smoke test (all scenarios, full JSON): [test_e2e_result.txt](test_e2e_result.txt) — 14/14 passed.
+Latest e2e smoke test (all scenarios, full JSON): [test_e2e_result.txt](test_e2e_result.txt).
 
 ## Quick start
 
