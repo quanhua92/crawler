@@ -27,6 +27,7 @@ services:
       # Default API key — override in .env for production
       CRAWLER_API_KEYS: ${CRAWLER_API_KEYS:-sk-dev-key-change-me}
       CRAWLER_SESSION_SECRET: ${CRAWLER_SESSION_SECRET:-dev-secret-change-me}
+      CRAWLER_ENGINE: ${CRAWLER_ENGINE:-camoufox}
     ports:
       - "0.0.0.0:8321:8321"
     depends_on:
@@ -57,7 +58,7 @@ services:
     volumes:
       - crawler_rustfs:/data
     healthcheck:
-      test: ["CMD", "curl", "-fsS", "http://localhost:9000/health"]
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:9000/health"]
       interval: 30s
       timeout: 10s
       retries: 3

@@ -118,7 +118,7 @@
       "warnings": [],
       "error": null
     }
-  [PASS] X feed (Nitter RSS) (1.6s)
+  [PASS] X feed (Nitter RSS) (2.0s)
 
 ============================================================
   X single post (syndication)
@@ -144,7 +144,7 @@
         "html": null,
         "lang": "en",
         "metrics": {
-          "favorite_count": 401,
+          "favorite_count": 402,
           "conversation_count": 247
         },
         "media": [
@@ -163,7 +163,7 @@
       "warnings": [],
       "error": null
     }
-  [PASS] X single post (syndication) (0.6s)
+  [PASS] X single post (syndication) (0.9s)
 
 ============================================================
   X thread walk
@@ -189,7 +189,7 @@
           "html": null,
           "lang": "en",
           "metrics": {
-            "favorite_count": 401,
+            "favorite_count": 402,
             "conversation_count": 247
           },
           "media": [
@@ -215,9 +215,128 @@
 ============================================================
   X replies (browser tier)
 ============================================================
-  (browser tier may be disabled: BrowserUnavailable: browser pool is empty)
-  skipping — not a failure, browser may be off
-  [PASS] X replies (browser tier) (0.0s)
+  response:
+    {
+      "status": "ok",
+      "source": "browser",
+      "engine_used": "browser",
+      "items": [
+        {
+          "id": "2084102509556326631",
+          "platform": "x",
+          "url": "https://nitter.net/QwenDevs/status/2084102509556326631#m",
+          "created_at": null,
+          "author": {
+            "id": null,
+            "username": "QwenDevs",
+            "name": "Qwen Developers"
+          },
+          "title": null,
+          "text": "We'll be hanging around and answering questions over the next 24 hours. So ask a...",
+          "html": null,
+          "lang": null,
+          "metrics": {},
+          "media": [],
+          "urls": [],
+          "quoted": null,
+          "reply_to": null,
+          "repost_of": null,
+          "source": "nitter-browser:nitter.net"
+        },
+        {
+          "id": "2084117929109692865",
+          "platform": "x",
+          "url": "https://nitter.net/0xkeenz/status/2084117929109692865#m",
+          "created_at": null,
+          "author": {
+            "id": null,
+            "username": "0xkeenz",
+            "name": "KeenZ\ud83d\ude36\u200d\ud83c\udf2b\ufe0f"
+          },
+          "title": null,
+          "text": "Thank you for your promise to provide qwen3.8 27b weight! I want to know if ther...",
+          "html": null,
+          "lang": null,
+          "metrics": {},
+          "media": [],
+          "urls": [],
+          "quoted": null,
+          "reply_to": null,
+          "repost_of": null,
+          "source": "nitter-browser:nitter.net"
+        },
+        {
+          "id": "2084133971332563085",
+          "platform": "x",
+          "url": "https://nitter.net/QwenDevs/status/2084133971332563085#m",
+          "created_at": null,
+          "author": {
+            "id": null,
+            "username": "QwenDevs",
+            "name": "Qwen Developers"
+          },
+          "title": null,
+          "text": "Keep the requests coming. We\u2019re listening, and we\u2019ll use them to help prioritize...",
+          "html": null,
+          "lang": null,
+          "metrics": {},
+          "media": [],
+          "urls": [],
+          "quoted": null,
+          "reply_to": null,
+          "repost_of": null,
+          "source": "nitter-browser:nitter.net"
+        },
+        {
+          "id": "2084119123039068192",
+          "platform": "x",
+          "url": "https://nitter.net/Web3Twon/status/2084119123039068192#m",
+          "created_at": null,
+          "author": {
+            "id": null,
+            "username": "Web3Twon",
+            "name": "Twon."
+          },
+          "title": null,
+          "text": "Plans for 35b Moe model? (3.8)",
+          "html": null,
+          "lang": null,
+          "metrics": {},
+          "media": [],
+          "urls": [],
+          "quoted": null,
+          "reply_to": null,
+          "repost_of": null,
+          "source": "nitter-browser:nitter.net"
+        },
+        {
+          "id": "2084135614530920784",
+          "platform": "x",
+          "url": "https://nitter.net/QwenDevs/status/2084135614530920784#m",
+          "created_at": null,
+          "author": {
+            "id": null,
+            "username": "QwenDevs",
+            "name": "Qwen Developers"
+          },
+          "title": null,
+          "text": "Keep the requests coming. We\u2019re listening, and we\u2019ll use them to help prioritize...",
+          "html": null,
+          "lang": null,
+          "metrics": {},
+          "media": [],
+          "urls": [],
+          "quoted": null,
+          "reply_to": null,
+          "repost_of": null,
+          "source": "nitter-browser:nitter.net"
+        }
+      ],
+      "item": null,
+      "warnings": [],
+      "error": null
+    }
+  [PASS] X replies (browser tier) (8.8s)
 
 ============================================================
   Substack feed (native domain)
@@ -229,7 +348,7 @@
       "engine_used": "http",
       "items": [
         {
-          "id": "-137102210471128517",
+          "id": "5296659185944302991",
           "platform": "substack",
           "url": "https://platformer.substack.com/p/why-platformer-is-leaving-substack",
           "created_at": "2024-01-12T01:00:49Z",
@@ -257,7 +376,7 @@
           "source": "substack-rss"
         },
         {
-          "id": "7493145769553369461",
+          "id": "-6328169026098726216",
           "platform": "substack",
           "url": "https://platformer.substack.com/p/meta-seeks-to-hide-harms-from-teens",
           "created_at": "2024-01-10T01:00:28Z",
@@ -285,7 +404,7 @@
           "source": "substack-rss"
         },
         {
-          "id": "-928457452047050329",
+          "id": "-2731368228003687130",
           "platform": "substack",
           "url": "https://platformer.substack.com/p/substack-says-it-will-remove-nazi",
           "created_at": "2024-01-08T22:49:21Z",
@@ -329,7 +448,7 @@
       "engine_used": "http",
       "items": [
         {
-          "id": "-1603239619179062304",
+          "id": "-6139498203055178513",
           "platform": "substack",
           "url": "https://www.lennysnewsletter.com/p/build-an-ai-code-review-bot-in-30",
           "created_at": "2026-08-05T12:04:01Z",
@@ -357,7 +476,7 @@
           "source": "substack-rss"
         },
         {
-          "id": "2002505078066056281",
+          "id": "-8172913077948631226",
           "platform": "substack",
           "url": "https://www.lennysnewsletter.com/p/what-if-youre-not-supposed-to-have",
           "created_at": "2026-08-04T13:02:53Z",
@@ -385,7 +504,7 @@
           "source": "substack-rss"
         },
         {
-          "id": "2705107829770700692",
+          "id": "-6579722793292623408",
           "platform": "substack",
           "url": "https://www.lennysnewsletter.com/p/how-i-ai-chatgpt-codex-voice-browser",
           "created_at": "2026-08-03T15:02:21Z",
@@ -417,7 +536,7 @@
       "warnings": [],
       "error": null
     }
-  [PASS] Substack feed (custom domain) (0.7s)
+  [PASS] Substack feed (custom domain) (1.2s)
 
 ============================================================
   Substack comments (API)
@@ -508,7 +627,7 @@
       "warnings": [],
       "error": null
     }
-  [PASS] Substack comments (API) (0.6s)
+  [PASS] Substack comments (API) (0.4s)
 
 ============================================================
   URL catch-all (X status)
@@ -534,7 +653,7 @@
         "html": null,
         "lang": "en",
         "metrics": {
-          "favorite_count": 401,
+          "favorite_count": 402,
           "conversation_count": 247
         },
         "media": [
@@ -553,7 +672,7 @@
       "warnings": [],
       "error": null
     }
-  [PASS] URL catch-all (X status) (0.1s)
+  [PASS] URL catch-all (X status) (0.5s)
 
 ============================================================
   URL catch-all (example.com)
@@ -565,7 +684,7 @@
       "engine_used": "http",
       "items": null,
       "item": {
-        "id": "709782467673261618",
+        "id": "130728375997025923",
         "platform": "web",
         "url": "https://example.com",
         "created_at": null,
@@ -589,7 +708,7 @@
       "warnings": [],
       "error": null
     }
-  [PASS] URL catch-all (example.com) (0.1s)
+  [PASS] URL catch-all (example.com) (0.2s)
 
 ============================================================
   Instance list

@@ -7,6 +7,10 @@ FastAPI service, Docker-first. Bring your own keys, run it behind your gateway.
 > (`source`, `engine_used`, `status`) so you always know what actually served it.
 > See [docs/DESIGN.md](docs/DESIGN.md) for the reasoning behind every choice.
 
+## Test results
+
+Latest e2e smoke test (all scenarios, full JSON): [test_e2e_result.txt](test_e2e_result.txt) — 14/14 passed.
+
 ## Quick start
 
 ```bash
@@ -131,3 +135,13 @@ Every live request persists to S3 (RustFS): `{hash}/output.json` (latest good) +
 ## License
 
 MIT. See [LICENSE](LICENSE).
+
+## Testing
+
+Run the e2e smoke tests against any deployed instance:
+
+```bash
+python3 tests/test_e2e.py --base http://localhost:8321 --key <your-key>
+```
+
+14 scenarios covering health, auth, X feeds/posts/threads/replies, Substack feeds/comments, URL catch-all, and archive. Latest results: [test_e2e_result.txt](test_e2e_result.txt).
