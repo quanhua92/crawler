@@ -2,7 +2,7 @@
 ############################################################
   crawler e2e — http://localhost:8321
   key: ✓ set
-  scenarios: health, auth-required, auth-page, x-feed, x-post, x-thread, x-replies, substack-native, substack-custom, substack-comments, url-x, url-web, search-ddg, search-searxng, search-auto, search-news, instances, archive
+  scenarios: health, auth-required, auth-page, x-feed, x-post, x-thread, x-replies, substack-native, substack-custom, substack-comments, url-x, url-web, search-ddg, search-searxng, search-auto, search-news, search-post, instances, archive
 ############################################################
 
 ============================================================
@@ -126,7 +126,7 @@
       "warnings": [],
       "error": null
     }
-  [PASS] X feed (Nitter RSS) (3.5s)
+  [PASS] X feed (Nitter RSS) (1.7s)
 
 ============================================================
   X single post (syndication)
@@ -173,7 +173,7 @@
       "warnings": [],
       "error": null
     }
-  [PASS] X single post (syndication) (0.9s)
+  [PASS] X single post (syndication) (0.5s)
 
 ============================================================
   X thread walk
@@ -350,7 +350,7 @@
       "warnings": [],
       "error": null
     }
-  [PASS] X replies (browser tier) (13.7s)
+  [PASS] X replies (browser tier) (6.4s)
 
 ============================================================
   Substack feed (native domain)
@@ -364,7 +364,7 @@
       "engine_used": "http",
       "items": [
         {
-          "id": "8499370313790494609",
+          "id": "2935213731731925899",
           "platform": "substack",
           "url": "https://platformer.substack.com/p/why-platformer-is-leaving-substack",
           "created_at": "2024-01-12T01:00:49Z",
@@ -392,7 +392,7 @@
           "source": "substack-rss"
         },
         {
-          "id": "-5556803172254844698",
+          "id": "-7985848397710017413",
           "platform": "substack",
           "url": "https://platformer.substack.com/p/meta-seeks-to-hide-harms-from-teens",
           "created_at": "2024-01-10T01:00:28Z",
@@ -420,7 +420,7 @@
           "source": "substack-rss"
         },
         {
-          "id": "2337391744361747971",
+          "id": "-8918028435058892629",
           "platform": "substack",
           "url": "https://platformer.substack.com/p/substack-says-it-will-remove-nazi",
           "created_at": "2024-01-08T22:49:21Z",
@@ -452,7 +452,7 @@
       "warnings": [],
       "error": null
     }
-  [PASS] Substack feed (native domain) (0.6s)
+  [PASS] Substack feed (native domain) (0.3s)
 
 ============================================================
   Substack feed (custom domain)
@@ -466,7 +466,7 @@
       "engine_used": "http",
       "items": [
         {
-          "id": "-3250459211873127289",
+          "id": "-7026814823920941235",
           "platform": "substack",
           "url": "https://www.lennysnewsletter.com/p/build-an-ai-code-review-bot-in-30",
           "created_at": "2026-08-05T12:04:01Z",
@@ -494,7 +494,7 @@
           "source": "substack-rss"
         },
         {
-          "id": "2793939762051959821",
+          "id": "-7410706993000903539",
           "platform": "substack",
           "url": "https://www.lennysnewsletter.com/p/what-if-youre-not-supposed-to-have",
           "created_at": "2026-08-04T13:02:53Z",
@@ -522,7 +522,7 @@
           "source": "substack-rss"
         },
         {
-          "id": "2799112174611799414",
+          "id": "4087536721885561800",
           "platform": "substack",
           "url": "https://www.lennysnewsletter.com/p/how-i-ai-chatgpt-codex-voice-browser",
           "created_at": "2026-08-03T15:02:21Z",
@@ -554,7 +554,7 @@
       "warnings": [],
       "error": null
     }
-  [PASS] Substack feed (custom domain) (1.6s)
+  [PASS] Substack feed (custom domain) (0.6s)
 
 ============================================================
   Substack comments (API)
@@ -647,7 +647,7 @@
       "warnings": [],
       "error": null
     }
-  [PASS] Substack comments (API) (0.4s)
+  [PASS] Substack comments (API) (0.1s)
 
 ============================================================
   URL catch-all (X status)
@@ -694,7 +694,7 @@
       "warnings": [],
       "error": null
     }
-  [PASS] URL catch-all (X status) (0.6s)
+  [PASS] URL catch-all (X status) (0.7s)
 
 ============================================================
   URL catch-all (example.com)
@@ -708,7 +708,7 @@
       "engine_used": "http",
       "items": null,
       "item": {
-        "id": "803309477156356929",
+        "id": "698300875813579246",
         "platform": "web",
         "url": "https://example.com",
         "created_at": null,
@@ -810,7 +810,7 @@
       "warnings": [],
       "error": null
     }
-  [PASS] Search (DuckDuckGo) (1.0s)
+  [PASS] Search (DuckDuckGo) (1.5s)
 
 ============================================================
   Search (SearXNG)
@@ -842,20 +842,20 @@
           "quoted": null,
           "reply_to": null,
           "repost_of": null,
-          "source": "search:bing"
+          "source": "search:google cse"
         },
         {
-          "id": "c0b78c9a96e624fd9a89",
+          "id": "fbce024c46bd501c532f",
           "platform": "search",
-          "url": "https://www.python-httpx.org/quickstart/",
+          "url": "https://www.geeksforgeeks.org/python/install-httpx-using-python-pip/",
           "created_at": null,
           "author": null,
-          "title": "QuickStart - HTTPX",
-          "text": "HTTPX will use universal line endings, normalising all cases to \\n. In some case...",
+          "title": "Install Httpx using Python PIP - GeeksforGeeks",
+          "text": "HTTPX is a fully featured HTTP client for Python 3, which provides synchronous a...",
           "html": null,
           "lang": null,
           "metrics": {
-            "score": 3.5,
+            "score": 1.0833333333333333,
             "category": "general"
           },
           "media": [],
@@ -863,20 +863,20 @@
           "quoted": null,
           "reply_to": null,
           "repost_of": null,
-          "source": "search:bing"
+          "source": "search:google cse"
         },
         {
-          "id": "625896d8dce64bf55e9f",
+          "id": "5b59d5648ed48f597de8",
           "platform": "search",
-          "url": "https://pypi.org/project/httpx/",
+          "url": "https://oneuptime.com/blog/post/2026-02-03-python-httpx-async-requests/view",
           "created_at": null,
           "author": null,
-          "title": "httpx \u00b7 PyPI",
-          "text": "Dec 6, 2024 \u00b7 HTTPX is a fully featured HTTP client library for Python 3. It inc...",
+          "title": "How to Use httpx for Async HTTP Requests - OneUptime",
+          "text": "Feb 3, 2026 \u00b7 Learn how to make async HTTP requests in Python using httpx. This ...",
           "html": null,
           "lang": null,
           "metrics": {
-            "score": 2.0,
+            "score": 0.8142857142857143,
             "category": "general"
           },
           "media": [],
@@ -884,7 +884,7 @@
           "quoted": null,
           "reply_to": null,
           "repost_of": null,
-          "source": "search:bing"
+          "source": "search:google cse"
         }
       ],
       "item": null,
@@ -904,27 +904,6 @@
       "source": "search:searxng",
       "engine_used": "http",
       "items": [
-        {
-          "id": "d91b1a307571d77e325e",
-          "platform": "search",
-          "url": "https://techcrunch.com/category/artificial-intelligence/",
-          "created_at": null,
-          "author": null,
-          "title": "AI News & Artificial Intelligence | TechCrunch",
-          "text": "AI \u00b7 MacPaw taps Liquid AI to offer on-device inference to devs building for its...",
-          "html": null,
-          "lang": null,
-          "metrics": {
-            "score": 5.5,
-            "category": "general"
-          },
-          "media": [],
-          "urls": [],
-          "quoted": null,
-          "reply_to": null,
-          "repost_of": null,
-          "source": "search:bing"
-        },
         {
           "id": "fe8d61ae851eb7be6311",
           "platform": "search",
@@ -957,7 +936,28 @@
           "html": null,
           "lang": null,
           "metrics": {
-            "score": 3.0,
+            "score": 4.0,
+            "category": "general"
+          },
+          "media": [],
+          "urls": [],
+          "quoted": null,
+          "reply_to": null,
+          "repost_of": null,
+          "source": "search:bing"
+        },
+        {
+          "id": "d91b1a307571d77e325e",
+          "platform": "search",
+          "url": "https://techcrunch.com/category/artificial-intelligence/",
+          "created_at": null,
+          "author": null,
+          "title": "AI News & Artificial Intelligence | TechCrunch",
+          "text": "AI \u00b7 MacPaw taps Liquid AI to offer on-device inference to devs building for its...",
+          "html": null,
+          "lang": null,
+          "metrics": {
+            "score": 4.0,
             "category": "general"
           },
           "media": [],
@@ -974,7 +974,7 @@
           "created_at": null,
           "author": null,
           "title": "AI News | Latest Headlines and Developments | Reuters",
-          "text": "Explore the latest artificial intelligence news with Reuters - from AI breakthro...",
+          "text": "18 hours ago \u00b7 Explore the latest artificial intelligence news with Reuters - fr...",
           "html": null,
           "lang": null,
           "metrics": {
@@ -995,7 +995,7 @@
           "created_at": null,
           "author": null,
           "title": "AI News \u2014 Today's Top Stories, Tracked & Ranked | AI Weekly",
-          "text": "AI news delivered 3x/week. Curated AI updates on funding, models, regulation, an...",
+          "text": "18 hours ago \u00b7 AI news delivered 3x/week. Curated AI updates on funding, models,...",
           "html": null,
           "lang": null,
           "metrics": {
@@ -1028,38 +1028,17 @@
       "engine_used": "http",
       "items": [
         {
-          "id": "19d1df44e57e3cf21c42",
+          "id": "b06c82b753baca384923",
           "platform": "search",
-          "url": "https://www.msn.com/en-us/news/technology/ai-stories-preferred-to-human-written-...",
+          "url": "https://www.msn.com/en-us/technology/artificial-intelligence/google-chief-scient...",
           "created_at": null,
           "author": null,
-          "title": "AI stories preferred to human-written ones - study",
-          "text": "A study sees if readers can spot if short stories were generated by artificial i...",
+          "title": "Google chief scientist Jeff Dean leaving in AI reshuffle after 27 years at compa...",
+          "text": "Google's AI divisions are getting reshuffled, the search giant announced on Wedn...",
           "html": null,
           "lang": null,
           "metrics": {
-            "score": 1.2222222222222223,
-            "category": "news"
-          },
-          "media": [],
-          "urls": [],
-          "quoted": null,
-          "reply_to": null,
-          "repost_of": null,
-          "source": "search:bing news"
-        },
-        {
-          "id": "87d2ac6a2bb503a02f32",
-          "platform": "search",
-          "url": "https://www.msn.com/en-us/technology/artificial-intelligence/ai-agent-created-fa...",
-          "created_at": null,
-          "author": null,
-          "title": "AI agent created fake online identities to access secure systems in latest breac...",
-          "text": "An AI agent created fake online identities to attempt to gain access to secure s...",
-          "html": null,
-          "lang": null,
-          "metrics": {
-            "score": 1.0,
+            "score": 2.6666666666666665,
             "category": "news"
           },
           "media": [],
@@ -1089,13 +1068,116 @@
           "reply_to": null,
           "repost_of": null,
           "source": "search:reuters"
+        },
+        {
+          "id": "84b1a67425edfa1de33c",
+          "platform": "search",
+          "url": "https://www.businessinsider.com/alphabet-stock-demis-hassabis-ai-deep-mind-tech-...",
+          "created_at": null,
+          "author": null,
+          "title": "Alphabet stock drops after the Google parent reshuffles top AI leadership",
+          "text": "The Google parent saw shares drop after news that DeepMind CEO Demis Hassabis wo...",
+          "html": null,
+          "lang": null,
+          "metrics": {
+            "score": 1.0,
+            "category": "news"
+          },
+          "media": [],
+          "urls": [],
+          "quoted": null,
+          "reply_to": null,
+          "repost_of": null,
+          "source": "search:bing news"
         }
       ],
       "item": null,
       "warnings": [],
       "error": null
     }
-  [PASS] Search (news category) (1.5s)
+  [PASS] Search (news category) (0.8s)
+
+============================================================
+  Search POST (special chars)
+============================================================
+  → POST http://localhost:8321/search
+    Authorization: Bearer sk-dev-k...
+    body: {"q": "c++ language", "provider": "auto", "limit": 3}
+  response:
+    {
+      "status": "ok",
+      "source": "search:searxng",
+      "engine_used": "http",
+      "items": [
+        {
+          "id": "18e8728a976ae98acc51",
+          "platform": "search",
+          "url": "https://www.geeksforgeeks.org/cpp/c-plus-plus/",
+          "created_at": null,
+          "author": null,
+          "title": "C++ Programming Language - GeeksforGeeks",
+          "text": "Jun 16, 2026 \u00b7 C++ is a programming language known for its fast speed, low level...",
+          "html": null,
+          "lang": null,
+          "metrics": {
+            "score": 2.5,
+            "category": "general"
+          },
+          "media": [],
+          "urls": [],
+          "quoted": null,
+          "reply_to": null,
+          "repost_of": null,
+          "source": "search:bing"
+        },
+        {
+          "id": "9b30fbf939e12358d6fa",
+          "platform": "search",
+          "url": "https://www.w3schools.com/cpp/cpp_intro.asp",
+          "created_at": null,
+          "author": null,
+          "title": "C++ Introduction - W3Schools",
+          "text": "What is C++? C++ is a cross-platform language that can be used to create high-pe...",
+          "html": null,
+          "lang": null,
+          "metrics": {
+            "score": 2.0,
+            "category": "general"
+          },
+          "media": [],
+          "urls": [],
+          "quoted": null,
+          "reply_to": null,
+          "repost_of": null,
+          "source": "search:bing"
+        },
+        {
+          "id": "07276dad770400679e20",
+          "platform": "search",
+          "url": "https://vi.wikipedia.org/wiki/C%2B%2B",
+          "created_at": null,
+          "author": null,
+          "title": "C++ \u2013 Wikipedia ti\u1ebfng Vi\u1ec7t",
+          "text": "C++ h\u1ea7u h\u1ebft \u0111\u01b0\u1ee3c th\u1ef1c thi d\u01b0\u1edbi d\u1ea1ng l\u00e0 m\u1ed9t ng\u00f4n ng\u1eef bi\u00ean d\u1ecbch, c\u00f3 th\u1ec3 ch\u1ea1y tr\u00ean ...",
+          "html": null,
+          "lang": null,
+          "metrics": {
+            "score": 1.0,
+            "category": "general"
+          },
+          "media": [],
+          "urls": [],
+          "quoted": null,
+          "reply_to": null,
+          "repost_of": null,
+          "source": "search:google cse"
+        }
+      ],
+      "item": null,
+      "warnings": [],
+      "error": null
+    }
+  [PASS] Search POST (special chars) (1.7s)
 
 ============================================================
   Instance list
@@ -1203,5 +1285,5 @@
   [PASS] Archive read (0.0s)
 
 ────────────────────────────────────────────────────────────
-  18 passed | 0 failed | 18 total
+  19 passed | 0 failed | 19 total
 ────────────────────────────────────────────────────────────

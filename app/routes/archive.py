@@ -99,3 +99,15 @@ async def archive_x_feed_versions(
     _require_archive()
     versions = await get_archived_versions("x", "feed", handle.lstrip("@"))
     return {"versions": versions}
+
+
+@router.get("/search/{query:path}")
+async def archive_search(
+    query: str,
+    _: AuthedUser | None = Depends(rate_limit_or_auth),
+    version: str | None = Query(None),
+):
+    # Path params don't decode + to space (query params do).
+    # Match the search endpoint's decoding so hashes align.
+    query = query.replace("+", " ")
+    return await _read("search", "query", query, version)

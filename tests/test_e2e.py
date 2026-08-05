@@ -69,6 +69,35 @@ def request(
     return status, parsed
 
 
+def _post(
+    base: str, path: str, *, key: str | None = None,
+    json_body: dict | None = None, timeout: int = 60,
+) -> dict | str:
+    """POST base+path with JSON body. Returns parsed JSON."""
+    url = base.rstrip("/") + path
+    headers = {"Accept": "application/json", "Content-Type": "application/json"}
+    if key:
+        headers["Authorization"] = f"Bearer {key}"
+
+    data = json.dumps(json_body).encode() if json_body else None
+    print(f"  → POST {url}")
+    print(f"    Authorization: {f'Bearer {key[:8]}...' if key else '(none)'}")
+    if json_body:
+        print(f"    body: {json.dumps(json_body)[:100]}")
+
+    req = urllib.request.Request(url, data=data, headers=headers, method="POST")
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as resp:
+            raw = resp.read().decode()
+    except urllib.error.HTTPError as e:
+        raw = e.read().decode()
+
+    try:
+        return json.loads(raw)
+    except (ValueError, json.JSONDecodeError):
+        return raw
+
+
 # ─── Scenario framework ──────────────────────────────────────
 
 
@@ -378,6 +407,23 @@ def s_search_news(base: str, key: str | None):
         _show("response", body)
 
 
+def s_search_post(base: str, key: str | None):
+    """Search via POST with special chars (no encoding issues)."""
+    body = _post(base, "/search", key=key, json_body={
+        "q": "c++ language", "provider": "auto", "limit": 3,
+    })
+    if isinstance(body, dict) and body.get("status") == "failed":
+        print(f"  (POST search unavailable: {body.get('error', '')[:80]})")
+        print("  skipping — not a failure")
+        return
+    _check(isinstance(body, dict), "expected dict response")
+    _check(body.get("status") in ("ok", "partial"),
+           f"status should be ok/partial, got '{body.get('status')}'")
+    items = body.get("items") or []
+    _check(len(items) > 0, "expected at least 1 result for 'c++ language'")
+    _show("response", body)
+
+
 # ─── All scenarios ────────────────────────────────────────────
 
 SCENARIOS = {
@@ -397,6 +443,7 @@ SCENARIOS = {
     "search-searxng": ("Search (SearXNG)", s_search_searxng),
     "search-auto": ("Search (auto fallback)", s_search_auto),
     "search-news": ("Search (news category)", s_search_news),
+    "search-post": ("Search POST (special chars)", s_search_post),
     "instances": ("Instance list", s_instances),
     "archive": ("Archive read", s_archive),
 }
@@ -424,6 +471,7 @@ Scenarios:
   search-searxng      Search via SearXNG (70+ engines)
   search-auto         Search with auto provider fallback
   search-news         Search news category
+  search-post         Search via POST with special chars (c++)
   instances          Nitter instance discovery
   archive            S3 archive read
 

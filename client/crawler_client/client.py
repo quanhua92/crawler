@@ -121,10 +121,13 @@ class CrawlerClient:
         language: str | None = None,
     ) -> CrawlResponse:
         """Web search via SearXNG (default) or DuckDuckGo (fallback)."""
-        return await self._get(
-            "/search", q=query, provider=provider, limit=limit,
-            categories=categories, time_range=time_range, language=language,
-        )
+        resp = await self._client.post("/search", json={
+            "q": query, "provider": provider, "limit": limit,
+            "categories": categories, "time_range": time_range,
+            "language": language,
+        })
+        _check(resp)
+        return CrawlResponse.model_validate(resp.json())
 
     # ─── Archive ───────────────────────────────────────────────
 
@@ -215,11 +218,14 @@ class SyncCrawlerClient:
         categories: str = "general", time_range: str | None = None,
         language: str | None = None,
     ) -> CrawlResponse:
-        """Web search via SearXNG (default) or DuckDuckGo (fallback)."""
-        return self._get(
-            "/search", q=query, provider=provider, limit=limit,
-            categories=categories, time_range=time_range, language=language,
-        )
+        """Web search — always POST (no encoding issues)."""
+        resp = self._client.post("/search", json={
+            "q": query, "provider": provider, "limit": limit,
+            "categories": categories, "time_range": time_range,
+            "language": language,
+        })
+        _check(resp)
+        return CrawlResponse.model_validate(resp.json())
 
     # ─── Archive ───────────────────────────────────────────────
 
