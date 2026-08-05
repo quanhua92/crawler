@@ -130,6 +130,23 @@ replies themselves aren't included:
 Nitter-independent (Nitter instances die), no auth, no antibot. It's the same
 endpoint Twitter's own embed widgets use.
 
+### Nitter RSS vs syndication JSON — when to use which
+
+| | Nitter RSS | syndication JSON |
+|---|---|---|
+| **Used for** | feeds (last ~20 posts) | single post, thread walk |
+| **Auth needed** | none | none (`token=a` is dummy) |
+| **Format** | RSS XML | JSON |
+| **Antibot** | none on nitter.net; Cloudflare on others | none |
+| **Nitter dependency** | yes (instance must be alive) | **no** — hits Twitter's CDN directly |
+| **Rate limits** | per-instance (operators manage tokens) | generous (public embed endpoint) |
+| **Data depth** | text, author, date, retweet marker | text, author, media, metrics, lang, reply count |
+| **When it fails** | instance down/suspended | rarely (Twitter CDN is very reliable) |
+
+The syndication endpoint is the backbone for single posts — it's what makes
+`GET /x/status/{id}` work reliably even when every Nitter instance is down.
+Nitter RSS is for feeds only.
+
 ---
 
 ## 3. Reply chain (upward — who is this replying to?)

@@ -1,7 +1,7 @@
 # crawler
 
 A self-hostable, **best-effort** content fetcher for X (Twitter), Substack, and any URL.
-FastAPI service, Docker-first. Bring your own keys, run it behind your gateway.
+FastAPI service, Docker-first. No upstream API keys needed — Nitter, syndication JSON, and public RSS are all keyless. Secure your instance with your own access keys.
 
 > **Best-effort, not guaranteed.** Every response carries provenance
 > (`source`, `engine_used`, `status`) so you always know what actually served it.
@@ -44,6 +44,17 @@ uvicorn app.main:app --port 8321 --reload
 - **Any URL** via the `/url/...` catch-all — auto-dispatches known hosts, best-effort otherwise
 - **Browser fallback** (Camoufox + Patchright) for Cloudflare/antibot-protected sources
 
+### How X data is fetched
+
+| Need | Source | Auth | Nitter-dependent? |
+|---|---|---|---|
+| Feed (last ~20 posts) | Nitter RSS (`nitter.net/{handle}/rss`) | none | yes (rotates instances) |
+| Single post / thread | Twitter syndication JSON (`cdn.syndication.twimg.com/tweet-result`) | none (`token=a` dummy) | **no** — hits Twitter CDN directly |
+| Replies to a post | Browser tier (loads Nitter/xcancel HTML, parses replies) | none | yes (browser solves antibot) |
+| >20 posts | Browser tier (loads profile page, scrolls) | none | yes |
+
+The syndication endpoint is Twitter's embed-widget backend — the same one `<blockquote class="twitter-tweet">` uses. No auth, no antibot, very reliable. It's why single posts work even when every Nitter instance is down.
+
 ## Auth
 
 Two front doors, same key. Service refuses to start if neither `CRAWLER_API_KEYS` nor `CRAWLER_ALLOW_PUBLIC=true` is set.
@@ -67,8 +78,6 @@ All `GET`, all accept `?limit ?since ?until ?engine=auto|http|browser ?format=js
 | `/url/{target:path}` | any URL, best-effort (auto-dispatch by host) |
 | `/x/{handle}` | X user feed (≤20 RSS, >20 browser) |
 | `/x/status/{id}` | single X post |
-
-> **X feed limits:** `?limit≤20` uses Nitter RSS (~1-2s). `?limit>20` auto-switches to the browser tier, which loads the Nitter profile page and scrolls (~8-25s, returns ~20-25 from the first page). Deep pagination beyond ~25 is a future improvement.
 | `/x/status/{id}/thread` | X reply chain (upward) |
 | `/x/status/{id}/replies` | X replies to a post (browser) |
 | `/substack/{blog}` | Substack feed |
@@ -77,6 +86,8 @@ All `GET`, all accept `?limit ?since ?until ?engine=auto|http|browser ?format=js
 | `GET /auth` · `POST /auth` | browser login |
 | `/archive/url/{target}` · `/archive/x/{handle}` · etc. | S3 archive (read-only) |
 | `/health` · `/instances` | ops |
+
+> **X feed limits:** `?limit≤20` uses Nitter RSS (~1-2s). `?limit>20` auto-switches to the browser tier, which loads the Nitter profile page and scrolls (~8-25s, returns ~20-25 from the first page). Deep pagination beyond ~25 is a future improvement.
 
 Examples:
 
