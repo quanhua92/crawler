@@ -100,15 +100,28 @@ def _check(condition, msg: str):
         raise AssertionError(msg)
 
 
-def _show(label: str, obj, max_len: int = 200):
-    """Print a truncated preview of a response object."""
-    if isinstance(obj, (dict, list)):
-        text = json.dumps(obj, indent=2, default=str)
-    else:
-        text = str(obj)
-    if len(text) > max_len:
-        text = text[:max_len] + "..."
-    print(f"  {label}: {text}")
+def _truncate(obj, max_str: int = 80, max_list: int = 5):
+    """Walk a JSON tree — truncate long strings, cap list length.
+    Keeps the full structure visible so you can see every field."""
+    if isinstance(obj, str):
+        return obj[:max_str] + "..." if len(obj) > max_str else obj
+    if isinstance(obj, dict):
+        return {k: _truncate(v, max_str, max_list) for k, v in obj.items()}
+    if isinstance(obj, list):
+        items = [_truncate(i, max_str, max_list) for i in obj[:max_list]]
+        if len(obj) > max_list:
+            items.append(f"... ({len(obj)} items total)")
+        return items
+    return obj
+
+
+def _show(label: str, obj, max_str: int = 80):
+    """Print a JSON object with long fields truncated but structure intact."""
+    truncated = _truncate(obj, max_str)
+    text = json.dumps(truncated, indent=2, default=str)
+    print(f"  {label}:")
+    for line in text.split("\n"):
+        print(f"    {line}")
 
 
 # ─── Scenarios ───────────────────────────────────────────────
