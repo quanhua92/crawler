@@ -1,7 +1,7 @@
 # crawler
 
-A self-hostable, **best-effort** content fetcher for X (Twitter), Substack, and any URL.
-FastAPI service, Docker-first. No upstream API keys needed — Nitter, syndication JSON, and public RSS are all keyless. Secure your instance with your own access keys.
+A self-hostable, **best-effort** content fetcher and web search API for X (Twitter), Substack, and any URL.
+FastAPI service, Docker-first. No upstream API keys needed — Nitter, syndication JSON, public RSS, SearXNG, and DuckDuckGo are all keyless. Secure your instance with your own access keys.
 
 > **Best-effort, not guaranteed.** Every response carries provenance
 > (`source`, `engine_used`, `status`) so you always know what actually served it.
@@ -63,7 +63,7 @@ The syndication endpoint is Twitter's embed-widget backend — the same one `<bl
 |---|---|---|---|
 | `auto` (default) | SearXNG → falls back to DDG | SearXNG optional | best available |
 | `searxng` | SearXNG (self-hosted, 70+ engines) | yes | 70+ engines aggregated |
-| `duckduckgo` | DuckDuckGo (direct, via duckduckgo-search lib) | **no** | DDG only |
+| `duckduckgo` | DuckDuckGo (direct, via ddgs library) | **no** | DDG only |
 
 `provider=auto` tries SearXNG first (richest results), falls back to DuckDuckGo if SearXNG is down or not configured. Search works out of the box even with zero containers — just DDG. See [docs/SEARCH.md](docs/SEARCH.md) for categories, filters, and provider details.
 
@@ -83,12 +83,12 @@ Two front doors, same key. Service refuses to start if neither `CRAWLER_API_KEYS
 
 ## Routes
 
-All `GET`, all accept `?limit ?since ?until ?engine=auto|http|browser ?format=json|jsonl|markdown|raw`.
+All accept `?limit ?since ?until ?engine=auto|http|browser ?format=json|jsonl|markdown|raw`. `/search` also supports POST (JSON body) for queries with special chars.
 
 | Path | Purpose |
 |---|---|
 | `/url/{target:path}` | any URL, best-effort (auto-dispatch by host) |
-| `/search?q=...` | web search (SearXNG default, DDG fallback) |
+| `GET /search?q=...` · `POST /search` | web search (SearXNG default, DDG fallback) |
 | `/x/{handle}` | X user feed (≤20 RSS, >20 browser) |
 | `/x/status/{id}` | single X post |
 | `/x/status/{id}/thread` | X reply chain (upward) |
@@ -190,4 +190,4 @@ Run the e2e smoke tests against any deployed instance:
 python3 tests/test_e2e.py --base http://localhost:8321 --key <your-key>
 ```
 
-14 scenarios covering health, auth, X feeds/posts/threads/replies, Substack feeds/comments, URL catch-all, and archive. Latest results: [test_e2e_result.txt](test_e2e_result.txt).
+Scenarios cover health, auth, X feeds/posts/threads/replies, Substack feeds/comments, web search (SearXNG + DDG + POST), URL catch-all, and archive. Latest results: [test_e2e_result.txt](test_e2e_result.txt).
