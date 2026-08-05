@@ -14,7 +14,7 @@ from app.browser import start as browser_start
 from app.browser import stop as browser_stop
 from app.config import settings, warn_insecure_config
 from app.fetch import close_client
-from app.routes import archive, auth, health, router, substack, x
+from app.routes import archive, auth, health, router, search, substack, x
 from app.storage import ensure_bucket
 
 logging.basicConfig(
@@ -54,3 +54,4 @@ app.include_router(x.router)
 app.include_router(substack.router)
 app.include_router(router.router)
 app.include_router(archive.router)
+app.include_router(search.router)

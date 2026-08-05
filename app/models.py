@@ -31,7 +31,7 @@ class Post(BaseModel):
     text: str = ""
     html: str | None = None
     lang: str | None = None
-    metrics: dict[str, int] = Field(default_factory=dict)
+    metrics: dict[str, int | float | str] = Field(default_factory=dict)
     media: list[Media] = Field(default_factory=list)
     urls: list[str] = Field(default_factory=list)
     quoted: Post | None = None

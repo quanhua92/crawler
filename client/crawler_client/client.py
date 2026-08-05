@@ -113,6 +113,19 @@ class CrawlerClient:
     async def fetch_url(self, url: str, *, limit: int = 20, engine: str = "auto") -> CrawlResponse:
         return await self._get(f"/url/{_url_encode(url)}", limit=limit, engine=engine)
 
+    # ─── Search ────────────────────────────────────────────────
+
+    async def search(
+        self, query: str, *, provider: str = "auto", limit: int = 10,
+        categories: str = "general", time_range: str | None = None,
+        language: str | None = None,
+    ) -> CrawlResponse:
+        """Web search via SearXNG (default) or DuckDuckGo (fallback)."""
+        return await self._get(
+            "/search", q=query, provider=provider, limit=limit,
+            categories=categories, time_range=time_range, language=language,
+        )
+
     # ─── Archive ───────────────────────────────────────────────
 
     async def get_archive(
@@ -194,6 +207,19 @@ class SyncCrawlerClient:
 
     def fetch_url(self, url: str, *, limit: int = 20, engine: str = "auto") -> CrawlResponse:
         return self._get(f"/url/{_url_encode(url)}", limit=limit, engine=engine)
+
+    # ─── Search ────────────────────────────────────────────────
+
+    def search(
+        self, query: str, *, provider: str = "auto", limit: int = 10,
+        categories: str = "general", time_range: str | None = None,
+        language: str | None = None,
+    ) -> CrawlResponse:
+        """Web search via SearXNG (default) or DuckDuckGo (fallback)."""
+        return self._get(
+            "/search", q=query, provider=provider, limit=limit,
+            categories=categories, time_range=time_range, language=language,
+        )
 
     # ─── Archive ───────────────────────────────────────────────
 

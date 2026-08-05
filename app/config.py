@@ -40,6 +40,10 @@ class Settings(BaseSettings):
     # ---- Nitter instance discovery ----
     instance_cache_ttl: int = 3600  # seconds
 
+    # ---- SearXNG (metasearch for /search endpoint) ----
+    # Internal URL. If empty/unset, /search falls back to DuckDuckGo.
+    searxng_url: str = "http://searxng:8080"
+
     # ---- S3 archive (RustFS / MinIO / any S3-compatible) ----
     # When s3_endpoint is empty, archiving is disabled (no-op). Live endpoints
     # write-through to S3 on every fetch; /archive/* routes read from S3 only.

@@ -309,6 +309,20 @@ def s_archive(base: str, key: str | None):
         print("  S3 archive not configured (set CRAWLER_S3_ENDPOINT)")
 
 
+def s_search(base: str, key: str | None):
+    """Web search via SearXNG or DuckDuckGo."""
+    status, body = request(
+        base, "/search?q=python+asyncio&provider=duckduckgo&limit=3", key=key,
+    )
+    _check(status == 200, f"expected 200, got {status}")
+    if isinstance(body, dict):
+        _check(body.get("status") in ("ok", "partial"),
+               f"status should be ok/partial, got '{body.get('status')}'")
+        items = body.get("items") or []
+        _check(len(items) > 0, "expected at least 1 search result")
+        _show("response", body)
+
+
 # ─── All scenarios ────────────────────────────────────────────
 
 SCENARIOS = {
@@ -324,6 +338,7 @@ SCENARIOS = {
     "substack-comments": ("Substack comments (API)", s_substack_comments),
     "url-x": ("URL catch-all (X status)", s_url_x),
     "url-web": ("URL catch-all (example.com)", s_url_web),
+    "search": ("Web search (DDG)", s_search),
     "instances": ("Instance list", s_instances),
     "archive": ("Archive read", s_archive),
 }

@@ -25,6 +25,7 @@ dependencies = [
     "patchright>=1.40",
     "browserforge>=0.2",
     "boto3>=1.35",
+    "ddgs>=9.0",
 ]
 
 [project.optional-dependencies]

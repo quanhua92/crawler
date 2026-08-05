@@ -79,6 +79,21 @@ services:
       "
     restart: "no"
 
+  # ── SearXNG (metasearch engine for /search endpoint) ────────
+  # Internal-only (no host port). Crawler proxies via /search.
+  # Search still works without this — falls back to DuckDuckGo.
+  searxng:
+    image: searxng/searxng:latest
+    container_name: crawler-searxng
+    restart: unless-stopped
+    environment:
+      - SEARXNG_BASE_URL=http://searxng:8080/
+    volumes:
+      - ./searxng/settings.yml:/etc/searxng/settings.yml:ro
+    depends_on:
+      rustfs:
+        condition: service_healthy
+
 volumes:
   crawler_rustfs:
     name: crawler_rustfs

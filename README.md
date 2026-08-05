@@ -40,9 +40,11 @@ uvicorn app.main:app --port 8321 --reload
 
 - **X feeds** via Nitter RSS (multi-instance fallback, `nitter.net` first, dynamic discovery)
 - **X single posts + threads** via Twitter syndication JSON (Nitter-independent)
-- **Substack feeds + posts** via public RSS
+- **Substack feeds + posts + comments** via public RSS + comment API
+- **Web search** via SearXNG (70+ engines, self-hosted) with DuckDuckGo fallback (zero container needed)
 - **Any URL** via the `/url/...` catch-all — auto-dispatches known hosts, best-effort otherwise
 - **Browser fallback** (Camoufox + Patchright) for Cloudflare/antibot-protected sources
+- **S3 archive** (RustFS) — every response persisted with versioned snapshots, `/archive/*` read-only access
 
 ### How X data is fetched
 
@@ -54,6 +56,16 @@ uvicorn app.main:app --port 8321 --reload
 | >20 posts | Browser tier (loads profile page, scrolls) | none | yes |
 
 The syndication endpoint is Twitter's embed-widget backend — the same one `<blockquote class="twitter-tweet">` uses. No auth, no antibot, very reliable. It's why single posts work even when every Nitter instance is down.
+
+### How web search works
+
+| `provider=` | Source | Container needed? | Coverage |
+|---|---|---|---|
+| `auto` (default) | SearXNG → falls back to DDG | SearXNG optional | best available |
+| `searxng` | SearXNG (self-hosted, 70+ engines) | yes | 70+ engines aggregated |
+| `duckduckgo` | DuckDuckGo (direct, via duckduckgo-search lib) | **no** | DDG only |
+
+`provider=auto` tries SearXNG first (richest results), falls back to DuckDuckGo if SearXNG is down or not configured. Search works out of the box even with zero containers — just DDG. See [docs/SEARCH.md](docs/SEARCH.md) for categories, filters, and provider details.
 
 ## Auth
 
@@ -76,6 +88,7 @@ All `GET`, all accept `?limit ?since ?until ?engine=auto|http|browser ?format=js
 | Path | Purpose |
 |---|---|
 | `/url/{target:path}` | any URL, best-effort (auto-dispatch by host) |
+| `/search?q=...` | web search (SearXNG default, DDG fallback) |
 | `/x/{handle}` | X user feed (≤20 RSS, >20 browser) |
 | `/x/status/{id}` | single X post |
 | `/x/status/{id}/thread` | X reply chain (upward) |
@@ -116,6 +129,7 @@ curl -H "Authorization: Bearer $KEY" "http://localhost:8321/substack/lennysnewsl
 | `CRAWLER_S3_BUCKET` | `crawler` | S3 bucket name |
 | `CRAWLER_S3_ACCESS_KEY` | `rustfsadmin` | S3 access key |
 | `CRAWLER_S3_SECRET_KEY` | `rustfsadmin` | S3 secret key |
+| `CRAWLER_SEARXNG_URL` | `http://searxng:8080` | SearXNG instance for `/search` (empty = DDG only) |
 
 ## Engines & proxies
 
