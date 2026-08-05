@@ -106,3 +106,89 @@ def _looks_like_rss(text: str) -> bool:
     """Check if the response body is XML/RSS, not an HTML profile page."""
     head = text.lstrip()[:500].lower()
     return "<rss" in head or "<?xml" in head or "<feed" in head
+
+
+# ─── Comments ───────────────────────────────────────────────────
+
+_POST_ID_RE = re.compile(r'post_id["\\]*:\s*"?(\d+)')
+
+
+async def _extract_post_id(blog: str, slug: str) -> str | None:
+    """Fetch the post page and extract the numeric post_id from HTML."""
+    url = f"https://{blog}/p/{slug}"
+    status, body = await fetch_text(url)
+    if status != 200 or not body:
+        return None
+    m = _POST_ID_RE.search(body)
+    return m.group(1) if m else None
+
+
+async def fetch_comments(
+    blog: str, slug: str, *, limit: int = 50
+) -> tuple[list[Post], str]:
+    """Fetch comments on a Substack post via the public comments API.
+
+    Flow: extract post_id from the post page HTML → call the comments API.
+    Returns a flat list (threaded children are flattened into the list).
+    """
+    blog = blog.lstrip("@").removeprefix("https://").removeprefix("http://").split("/")[0]
+    if "." not in blog:
+        blog = f"{blog}.substack.com"
+
+    post_id = await _extract_post_id(blog, slug)
+    if not post_id:
+        return [], ""
+
+    from app.fetch import fetch_json
+
+    api_url = (
+        f"https://{blog}/api/v1/post/{post_id}/comments"
+        f"?limit={min(limit, 100)}&sort=best"
+    )
+    data = await fetch_json(api_url)
+    if not data or "comments" not in data:
+        return [], ""
+
+    posts: list[Post] = []
+    for c in data["comments"]:
+        posts.extend(_comment_to_posts(c, blog, slug, post_id))
+        if len(posts) >= limit:
+            break
+
+    return posts[:limit], "substack-comments"
+
+
+def _comment_to_posts(
+    comment: dict, blog: str, slug: str, post_id: str
+) -> list[Post]:
+    """Convert a comment (with nested children) to flat Post list."""
+    result: list[Post] = []
+
+    cid = str(comment.get("id", ""))
+    body_html = comment.get("body", "") or ""
+    text = _strip_html(body_html)
+
+    post = Post(
+        id=cid,
+        platform="substack",
+        url=f"https://{blog}/p/{slug}/comment/{cid}",
+        text=text,
+        html=body_html,
+        author=Author(
+            username=comment.get("handle", ""),
+            name=comment.get("name", ""),
+        ),
+        metrics={
+            "reaction_count": comment.get("reaction_count", 0),
+            "children_count": comment.get("children_count", 0),
+        },
+        reply_to=str(comment.get("ancestor_path", "")).split(".")[-1] or None,
+        source="substack-comments",
+    )
+    result.append(post)
+
+    # Flatten nested children
+    for child in comment.get("children", []) or []:
+        result.extend(_comment_to_posts(child, blog, slug, post_id))
+
+    return result

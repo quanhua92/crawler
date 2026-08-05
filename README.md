@@ -65,6 +65,7 @@ All `GET`, all accept `?limit ?since ?until ?engine=auto|http|browser ?format=js
 | `/x/status/{id}/replies` | X replies to a post (browser) |
 | `/substack/{blog}` | Substack feed |
 | `/substack/{blog}/p/{slug}` | Substack post |
+| `/substack/{blog}/p/{slug}/comments` | Substack post comments (public API) |
 | `GET /auth` · `POST /auth` | browser login |
 | `/archive/url/{target}` · `/archive/x/{handle}` · etc. | S3 archive (read-only) |
 | `/health` · `/instances` | ops |

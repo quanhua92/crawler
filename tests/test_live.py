@@ -102,3 +102,18 @@ async def test_live_web_example_com():
     assert "Example Domain" in (post.title or "")
     assert len(post.text) > 0
     assert "example" in post.text.lower()
+
+
+@pytest.mark.asyncio
+async def test_live_substack_comments():
+    """Real Substack comments — platformer (public API, no auth)."""
+    comments, source = await substack_src.fetch_comments(
+        "platformer", "why-platformer-is-leaving-substack", limit=5
+    )
+    assert len(comments) > 0, "expected at least 1 comment"
+    assert source == "substack-comments"
+    c = comments[0]
+    assert c.platform == "substack"
+    assert c.id
+    assert c.text or c.html
+    assert c.author is not None

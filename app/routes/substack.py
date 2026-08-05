@@ -71,3 +71,31 @@ async def substack_post(
 
     await persist("substack", "post", f"{blog}/p/{slug}", {}, resp)
     return resp
+
+
+@router.get("/{blog}/p/{slug}/comments")
+async def substack_comments(
+    blog: str,
+    slug: str,
+    _: AuthedUser | None = Depends(rate_limit_or_auth),
+    limit: int = Query(50, ge=1, le=200),
+    format: str = Query("json"),
+):
+    """Fetch comments on a Substack post (public API, no browser needed)."""
+    blog = blog.lstrip("@")
+
+    try:
+        comments, source = await substack_src.fetch_comments(blog, slug, limit=limit)
+    except Exception as e:
+        logger.exception("substack comments failed for %s/p/%s", blog, slug)
+        resp = CrawlResponse.failed(error=f"{type(e).__name__}: {e}")
+        await persist("substack", "comments", f"{blog}/p/{slug}", {"limit": limit}, resp)
+        return resp
+
+    if comments:
+        resp = CrawlResponse.ok(items=comments, source=source, engine="http")
+    else:
+        resp = CrawlResponse.failed(error=f"no comments found for {blog}/p/{slug}")
+
+    await persist("substack", "comments", f"{blog}/p/{slug}", {"limit": limit}, resp)
+    return resp

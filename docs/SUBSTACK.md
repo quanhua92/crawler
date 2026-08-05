@@ -10,6 +10,7 @@ How to use crawler for Substack content. See [DESIGN.md](DESIGN.md) for architec
 |---|---|---|---|
 | Blog feed | `GET /substack/{blog}?limit=20` | http | public RSS |
 | Single post | `GET /substack/{blog}/p/{slug}` | http | rss match |
+| Post comments | `GET /substack/{blog}/p/{slug}/comments` | http | public API |
 | Any Substack URL | `GET /url/https://blog.substack.com/...` | auto | platform auto-detect |
 | Archived snapshot | `GET /archive/substack/{blog}` | — | S3 read-only |
 
@@ -112,7 +113,38 @@ which does a direct page fetch (generic web source).
 
 ---
 
-## 3. Any Substack URL (catch-all)
+## 3. Post comments
+
+```
+GET /substack/{blog}/p/{slug}/comments?limit=50
+```
+
+Fetches comments on a Substack post via Substack's public comment API. No auth,
+no browser — plain HTTP.
+
+```bash
+curl -H "Authorization: Bearer $KEY" \
+  "http://localhost:8000/substack/platformer/p/why-platformer-is-leaving-substack/comments?limit=10"
+```
+
+**How it works:**
+1. Fetches the post page HTML to extract the numeric `post_id`
+   (`"post_id":140602898`)
+2. Calls `https://{blog}.substack.com/api/v1/post/{post_id}/comments?limit=N`
+3. Flattens threaded replies (nested `children`) into a flat list
+
+Each comment is a `Post` with:
+- `id` — comment ID
+- `text` — stripped comment body
+- `html` — raw comment HTML
+- `author` — `{username, name}` from the commenter's Substack profile
+- `metrics` — `{reaction_count, children_count}` (likes + reply count)
+- `reply_to` — parent comment ID (for threading; `null` for top-level)
+- `source` — `"substack-comments"`
+
+---
+
+## 4. Any Substack URL (catch-all)
 
 ```
 GET /url/https://platformer.substack.com/p/some-post
