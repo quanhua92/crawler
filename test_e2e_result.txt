@@ -8,6 +8,8 @@
 ============================================================
   Health check
 ============================================================
+  → GET http://localhost:8321/health
+    Authorization: (none)
   response:
     {
       "status": "ok",
@@ -22,6 +24,8 @@
 ============================================================
   Auth enforcement
 ============================================================
+  → GET http://localhost:8321/x/QwenDevs
+    Authorization: (none)
   auth enforced: 401 without key ✓
   response:
     {
@@ -32,12 +36,16 @@
 ============================================================
   Login page (/auth)
 ============================================================
+  → GET http://localhost:8321/auth
+    Authorization: (none)
   /auth returns HTML login form ✓
   [PASS] Login page (/auth) (0.0s)
 
 ============================================================
   X feed (Nitter RSS)
 ============================================================
+  → GET http://localhost:8321/x/QwenDevs?limit=3
+    Authorization: Bearer sk-dev-k...
   response:
     {
       "status": "ok",
@@ -118,11 +126,13 @@
       "warnings": [],
       "error": null
     }
-  [PASS] X feed (Nitter RSS) (2.0s)
+  [PASS] X feed (Nitter RSS) (2.9s)
 
 ============================================================
   X single post (syndication)
 ============================================================
+  → GET http://localhost:8321/x/status/2084102417885585597
+    Authorization: Bearer sk-dev-k...
   response:
     {
       "status": "ok",
@@ -163,11 +173,13 @@
       "warnings": [],
       "error": null
     }
-  [PASS] X single post (syndication) (0.9s)
+  [PASS] X single post (syndication) (0.6s)
 
 ============================================================
   X thread walk
 ============================================================
+  → GET http://localhost:8321/x/status/2084102417885585597/thread
+    Authorization: Bearer sk-dev-k...
   response:
     {
       "status": "ok",
@@ -215,6 +227,8 @@
 ============================================================
   X replies (browser tier)
 ============================================================
+  → GET http://localhost:8321/x/status/2084102417885585597/replies?limit=5
+    Authorization: Bearer sk-dev-k...
   response:
     {
       "status": "ok",
@@ -288,17 +302,17 @@
           "source": "nitter-browser:nitter.net"
         },
         {
-          "id": "2084119123039068192",
+          "id": "2084126763387347210",
           "platform": "x",
-          "url": "https://nitter.net/Web3Twon/status/2084119123039068192#m",
+          "url": "https://nitter.net/sorekyo/status/2084126763387347210#m",
           "created_at": null,
           "author": {
             "id": null,
-            "username": "Web3Twon",
-            "name": "Twon."
+            "username": "sorekyo",
+            "name": "sorekyo"
           },
           "title": null,
-          "text": "Plans for 35b Moe model? (3.8)",
+          "text": "This is such a huge release, I am really happy to see that a 27B model is shippi...",
           "html": null,
           "lang": null,
           "metrics": {},
@@ -310,9 +324,9 @@
           "source": "nitter-browser:nitter.net"
         },
         {
-          "id": "2084135614530920784",
+          "id": "2084190511456457120",
           "platform": "x",
-          "url": "https://nitter.net/QwenDevs/status/2084135614530920784#m",
+          "url": "https://nitter.net/QwenDevs/status/2084190511456457120#m",
           "created_at": null,
           "author": {
             "id": null,
@@ -336,11 +350,13 @@
       "warnings": [],
       "error": null
     }
-  [PASS] X replies (browser tier) (8.8s)
+  [PASS] X replies (browser tier) (9.5s)
 
 ============================================================
   Substack feed (native domain)
 ============================================================
+  → GET http://localhost:8321/substack/platformer?limit=3
+    Authorization: Bearer sk-dev-k...
   response:
     {
       "status": "ok",
@@ -348,7 +364,7 @@
       "engine_used": "http",
       "items": [
         {
-          "id": "5296659185944302991",
+          "id": "-5876359567768407133",
           "platform": "substack",
           "url": "https://platformer.substack.com/p/why-platformer-is-leaving-substack",
           "created_at": "2024-01-12T01:00:49Z",
@@ -376,7 +392,7 @@
           "source": "substack-rss"
         },
         {
-          "id": "-6328169026098726216",
+          "id": "6004674836001407128",
           "platform": "substack",
           "url": "https://platformer.substack.com/p/meta-seeks-to-hide-harms-from-teens",
           "created_at": "2024-01-10T01:00:28Z",
@@ -404,7 +420,7 @@
           "source": "substack-rss"
         },
         {
-          "id": "-2731368228003687130",
+          "id": "-9132874800202099003",
           "platform": "substack",
           "url": "https://platformer.substack.com/p/substack-says-it-will-remove-nazi",
           "created_at": "2024-01-08T22:49:21Z",
@@ -441,6 +457,8 @@
 ============================================================
   Substack feed (custom domain)
 ============================================================
+  → GET http://localhost:8321/substack/lennysnewsletter?limit=3
+    Authorization: Bearer sk-dev-k...
   response:
     {
       "status": "ok",
@@ -448,7 +466,7 @@
       "engine_used": "http",
       "items": [
         {
-          "id": "-6139498203055178513",
+          "id": "-4428313752864858106",
           "platform": "substack",
           "url": "https://www.lennysnewsletter.com/p/build-an-ai-code-review-bot-in-30",
           "created_at": "2026-08-05T12:04:01Z",
@@ -476,7 +494,7 @@
           "source": "substack-rss"
         },
         {
-          "id": "-8172913077948631226",
+          "id": "2272886027932385665",
           "platform": "substack",
           "url": "https://www.lennysnewsletter.com/p/what-if-youre-not-supposed-to-have",
           "created_at": "2026-08-04T13:02:53Z",
@@ -504,7 +522,7 @@
           "source": "substack-rss"
         },
         {
-          "id": "-6579722793292623408",
+          "id": "-1692851731397116549",
           "platform": "substack",
           "url": "https://www.lennysnewsletter.com/p/how-i-ai-chatgpt-codex-voice-browser",
           "created_at": "2026-08-03T15:02:21Z",
@@ -536,11 +554,13 @@
       "warnings": [],
       "error": null
     }
-  [PASS] Substack feed (custom domain) (1.2s)
+  [PASS] Substack feed (custom domain) (1.1s)
 
 ============================================================
   Substack comments (API)
 ============================================================
+  → GET http://localhost:8321/substack/platformer/p/why-platformer-is-leaving-substack/comments?limit=3
+    Authorization: Bearer sk-dev-k...
   response:
     {
       "status": "ok",
@@ -632,6 +652,8 @@
 ============================================================
   URL catch-all (X status)
 ============================================================
+  → GET http://localhost:8321/url/https%3A%2F%2Fx.com%2FQwenDevs%2Fstatus%2F2084102417885585597
+    Authorization: Bearer sk-dev-k...
   response:
     {
       "status": "ok",
@@ -672,11 +694,13 @@
       "warnings": [],
       "error": null
     }
-  [PASS] URL catch-all (X status) (0.5s)
+  [PASS] URL catch-all (X status) (0.7s)
 
 ============================================================
   URL catch-all (example.com)
 ============================================================
+  → GET http://localhost:8321/url/https%3A%2F%2Fexample.com
+    Authorization: Bearer sk-dev-k...
   response:
     {
       "status": "ok",
@@ -684,7 +708,7 @@
       "engine_used": "http",
       "items": null,
       "item": {
-        "id": "130728375997025923",
+        "id": "666912360755078740",
         "platform": "web",
         "url": "https://example.com",
         "created_at": null,
@@ -713,6 +737,8 @@
 ============================================================
   Instance list
 ============================================================
+  → GET http://localhost:8321/instances
+    Authorization: Bearer sk-dev-k...
   response:
     {
       "instances": [
@@ -721,7 +747,7 @@
         "nitter.catsarch.com",
         "nitter.tiekoetter.com",
         "nitter.kareem.one",
-        "... (8 items total)"
+        "... (9 items total)"
       ]
     }
   [PASS] Instance list (0.0s)
@@ -729,6 +755,8 @@
 ============================================================
   Archive read
 ============================================================
+  → GET http://localhost:8321/archive/x/QwenDevs
+    Authorization: Bearer sk-dev-k...
   response:
     {
       "status": "ok",

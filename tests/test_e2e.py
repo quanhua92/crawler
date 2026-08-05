@@ -45,6 +45,11 @@ def request(
     if key:
         headers["Authorization"] = f"Bearer {key}"
 
+    # Print the request being sent
+    auth_preview = f"Bearer {key[:8]}..." if key else "(none)"
+    print(f"  → GET {url}")
+    print(f"    Authorization: {auth_preview}")
+
     req = urllib.request.Request(url, headers=headers)
     try:
         with urllib.request.urlopen(req, timeout=timeout) as resp:
