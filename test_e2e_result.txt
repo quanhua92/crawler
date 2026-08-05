@@ -2,19 +2,31 @@
 ############################################################
   crawler e2e — http://localhost:8321
   key: ✓ set
-  scenarios: health, auth-required, auth-page, x-feed, x-post, x-thread, substack-native, substack-custom, substack-comments, url-x, url-web, instances, archive
+  scenarios: health, auth-required, auth-page, x-feed, x-post, x-thread, x-replies, substack-native, substack-custom, substack-comments, url-x, url-web, instances, archive
 ############################################################
 
 ============================================================
   Health check
 ============================================================
-  engine=camoufox browser=True archive=True public=False
+  response:
+    {
+      "status": "ok",
+      "engine": "camoufox",
+      "browser_enabled": true,
+      "archive_enabled": true,
+      "allow_public": false,
+      "auth_required": true
+    }
   [PASS] Health check (0.0s)
 
 ============================================================
   Auth enforcement
 ============================================================
   auth enforced: 401 without key ✓
+  response:
+    {
+      "detail": "authentication required"
+    }
   [PASS] Auth enforcement (0.0s)
 
 ============================================================
@@ -26,101 +38,660 @@
 ============================================================
   X feed (Nitter RSS)
 ============================================================
-  3 posts from nitter:nitter.net
-  first post:
+  response:
     {
-      "id": "2084665356703195433",
-      "platform": "x",
-      "url": "https://nitter.net/shuai_bai_/status/2084665356703195433#m",
-      "created_at": "2026-08-04T15:38:46Z",
-      "author": {
-        "id": null,
-        "username": "shuai_bai_",
-        "name": null
-      },
-      "title": null,
-      "text": "What does it really mean for an agent to be multimodal-native?\n\nIt should be mor...",
-      "html": "<p>What does it really mean for an agent to be multimodal-native?<br />\n<br />\nI...",
-      "lang": null,
-      "metrics": {},
-      "media": [],
-      "urls": [],
-      "quoted": null,
-      "reply_to": null,
-      "repost_of": {
-        "username": "QwenDevs",
-        "id": "2084665356703195433"
-      },
-      "source": "nitter:nitter.net"
+      "status": "ok",
+      "source": "nitter:nitter.net",
+      "engine_used": "http",
+      "items": [
+        {
+          "id": "2084665356703195433",
+          "platform": "x",
+          "url": "https://nitter.net/shuai_bai_/status/2084665356703195433#m",
+          "created_at": "2026-08-04T15:38:46Z",
+          "author": {
+            "id": null,
+            "username": "shuai_bai_",
+            "name": null
+          },
+          "title": null,
+          "text": "What does it really mean for an agent to be multimodal-native?\n\nIt should be mor...",
+          "html": "<p>What does it really mean for an agent to be multimodal-native?<br />\n<br />\nI...",
+          "lang": null,
+          "metrics": {},
+          "media": [],
+          "urls": [],
+          "quoted": null,
+          "reply_to": null,
+          "repost_of": {
+            "username": "QwenDevs",
+            "id": "2084665356703195433"
+          },
+          "source": "nitter:nitter.net"
+        },
+        {
+          "id": "2084866614605078747",
+          "platform": "x",
+          "url": "https://nitter.net/QwenDevs/status/2084866614605078747#m",
+          "created_at": "2026-08-05T04:58:30Z",
+          "author": {
+            "id": null,
+            "username": "QwenDevs",
+            "name": null
+          },
+          "title": null,
+          "text": "Hermes agent too!\n\n\nQwen (@Alibaba_Qwen)\n\nQwen3.8-Max is available in Hermes Age...",
+          "html": "<p>Hermes agent too!</p>\n<hr />\n<blockquote>\n<b>Qwen (@Alibaba_Qwen)</b>\n<p>\n<p>...",
+          "lang": null,
+          "metrics": {},
+          "media": [],
+          "urls": [],
+          "quoted": null,
+          "reply_to": null,
+          "repost_of": null,
+          "source": "nitter:nitter.net"
+        },
+        {
+          "id": "2084866408010412379",
+          "platform": "x",
+          "url": "https://nitter.net/QwenDevs/status/2084866408010412379#m",
+          "created_at": "2026-08-05T04:57:41Z",
+          "author": {
+            "id": null,
+            "username": "QwenDevs",
+            "name": null
+          },
+          "title": null,
+          "text": "You can now use Qwen3.8-Max on Cline!\n\n\nQwen (@Alibaba_Qwen)\n\nTry npm i -g cline...",
+          "html": "<p>You can now use Qwen3.8-Max on Cline!</p>\n<hr />\n<blockquote>\n<b>Qwen (@Aliba...",
+          "lang": null,
+          "metrics": {},
+          "media": [],
+          "urls": [],
+          "quoted": null,
+          "reply_to": null,
+          "repost_of": null,
+          "source": "nitter:nitter.net"
+        }
+      ],
+      "item": null,
+      "warnings": [],
+      "error": null
     }
-  [PASS] X feed (Nitter RSS) (2.1s)
+  [PASS] X feed (Nitter RSS) (1.6s)
 
 ============================================================
   X single post (syndication)
 ============================================================
-  post by @QwenDevs: git init qwen_devs
-
-README.md:
-Hey 👋 We're the folks from Qw...
-  metrics: {'favorite_count': 401, 'conversation_count': 247}
+  response:
+    {
+      "status": "ok",
+      "source": "syndication",
+      "engine_used": "http",
+      "items": null,
+      "item": {
+        "id": "2084102417885585597",
+        "platform": "x",
+        "url": "https://x.com/QwenDevs/status/2084102417885585597",
+        "created_at": "2026-08-03T02:21:51Z",
+        "author": {
+          "id": "2077014085598941184",
+          "username": "QwenDevs",
+          "name": "Qwen Developers"
+        },
+        "title": null,
+        "text": "git init qwen_devs\n\nREADME.md:\nHey \ud83d\udc4b We're the folks from Qwen Foundation Model ...",
+        "html": null,
+        "lang": "en",
+        "metrics": {
+          "favorite_count": 401,
+          "conversation_count": 247
+        },
+        "media": [
+          {
+            "type": "photo",
+            "url": "https://pbs.twimg.com/media/HOw22UFbgAAxcdP.jpg",
+            "expanded_url": "https://x.com/QwenDevs/status/2084102417885585597/photo/1"
+          }
+        ],
+        "urls": [],
+        "quoted": null,
+        "reply_to": null,
+        "repost_of": null,
+        "source": "syndication"
+      },
+      "warnings": [],
+      "error": null
+    }
   [PASS] X single post (syndication) (0.6s)
 
 ============================================================
   X thread walk
 ============================================================
-  thread depth: 1 posts
+  response:
+    {
+      "status": "ok",
+      "source": "syndication",
+      "engine_used": "http",
+      "items": [
+        {
+          "id": "2084102417885585597",
+          "platform": "x",
+          "url": "https://x.com/QwenDevs/status/2084102417885585597",
+          "created_at": "2026-08-03T02:21:51Z",
+          "author": {
+            "id": "2077014085598941184",
+            "username": "QwenDevs",
+            "name": "Qwen Developers"
+          },
+          "title": null,
+          "text": "git init qwen_devs\n\nREADME.md:\nHey \ud83d\udc4b We're the folks from Qwen Foundation Model ...",
+          "html": null,
+          "lang": "en",
+          "metrics": {
+            "favorite_count": 401,
+            "conversation_count": 247
+          },
+          "media": [
+            {
+              "type": "photo",
+              "url": "https://pbs.twimg.com/media/HOw22UFbgAAxcdP.jpg",
+              "expanded_url": "https://x.com/QwenDevs/status/2084102417885585597/photo/1"
+            }
+          ],
+          "urls": [],
+          "quoted": null,
+          "reply_to": null,
+          "repost_of": null,
+          "source": "syndication"
+        }
+      ],
+      "item": null,
+      "warnings": [],
+      "error": null
+    }
   [PASS] X thread walk (0.1s)
+
+============================================================
+  X replies (browser tier)
+============================================================
+  (browser tier may be disabled: BrowserUnavailable: browser pool is empty)
+  skipping — not a failure, browser may be off
+  [PASS] X replies (browser tier) (0.0s)
 
 ============================================================
   Substack feed (native domain)
 ============================================================
-  3 posts from substack-rss
-  first post title:
-    "Why Platformer is leaving Substack"
+  response:
+    {
+      "status": "ok",
+      "source": "substack-rss",
+      "engine_used": "http",
+      "items": [
+        {
+          "id": "-137102210471128517",
+          "platform": "substack",
+          "url": "https://platformer.substack.com/p/why-platformer-is-leaving-substack",
+          "created_at": "2024-01-12T01:00:49Z",
+          "author": {
+            "id": null,
+            "username": "Casey Newton",
+            "name": "Casey Newton"
+          },
+          "title": "Why Platformer is leaving Substack",
+          "text": "We\u2019ve seen this movie before \u2014 and we won\u2019t stick around to watch it play out",
+          "html": "<div class=\"captioned-image-container\"><figure><a class=\"image-link image2 is-vi...",
+          "lang": null,
+          "metrics": {},
+          "media": [
+            {
+              "type": "image",
+              "url": "https://substackcdn.com/image/fetch/$s_!Rd9a!,f_auto,q_auto:good,fl_progressive:...",
+              "expanded_url": null
+            }
+          ],
+          "urls": [],
+          "quoted": null,
+          "reply_to": null,
+          "repost_of": null,
+          "source": "substack-rss"
+        },
+        {
+          "id": "7493145769553369461",
+          "platform": "substack",
+          "url": "https://platformer.substack.com/p/meta-seeks-to-hide-harms-from-teens",
+          "created_at": "2024-01-10T01:00:28Z",
+          "author": {
+            "id": null,
+            "username": "Casey Newton",
+            "name": "Casey Newton"
+          },
+          "title": "Meta seeks to hide harms from teens",
+          "text": "But to change the conversation, the company will have to do more than tweak its ...",
+          "html": "<div class=\"captioned-image-container\"><figure><a class=\"image-link image2 is-vi...",
+          "lang": null,
+          "metrics": {},
+          "media": [
+            {
+              "type": "image",
+              "url": "https://substackcdn.com/image/fetch/$s_!TNSp!,f_auto,q_auto:good,fl_progressive:...",
+              "expanded_url": null
+            }
+          ],
+          "urls": [],
+          "quoted": null,
+          "reply_to": null,
+          "repost_of": null,
+          "source": "substack-rss"
+        },
+        {
+          "id": "-928457452047050329",
+          "platform": "substack",
+          "url": "https://platformer.substack.com/p/substack-says-it-will-remove-nazi",
+          "created_at": "2024-01-08T22:49:21Z",
+          "author": {
+            "id": null,
+            "username": "Casey Newton",
+            "name": "Casey Newton"
+          },
+          "title": "Substack says it will remove Nazi publications from the platform",
+          "text": "Nazi content violates rules against incitement to violence, the company says",
+          "html": "<div class=\"captioned-image-container\"><figure><a class=\"image-link image2 is-vi...",
+          "lang": null,
+          "metrics": {},
+          "media": [
+            {
+              "type": "image",
+              "url": "https://substackcdn.com/image/fetch/$s_!A5D9!,f_auto,q_auto:good,fl_progressive:...",
+              "expanded_url": null
+            }
+          ],
+          "urls": [],
+          "quoted": null,
+          "reply_to": null,
+          "repost_of": null,
+          "source": "substack-rss"
+        }
+      ],
+      "item": null,
+      "warnings": [],
+      "error": null
+    }
   [PASS] Substack feed (native domain) (0.3s)
 
 ============================================================
   Substack feed (custom domain)
 ============================================================
-  3 posts from substack-rss
-  [PASS] Substack feed (custom domain) (1.2s)
+  response:
+    {
+      "status": "ok",
+      "source": "substack-rss",
+      "engine_used": "http",
+      "items": [
+        {
+          "id": "-1603239619179062304",
+          "platform": "substack",
+          "url": "https://www.lennysnewsletter.com/p/build-an-ai-code-review-bot-in-30",
+          "created_at": "2026-08-05T12:04:01Z",
+          "author": {
+            "id": null,
+            "username": "Claire Vo",
+            "name": "Claire Vo"
+          },
+          "title": "Build an AI code review bot in 30 minutes with Vercel Eve",
+          "text": "Watch now | \ud83c\udf99\ufe0f I used Vercel Eve agents and Codex to build Merge Mommy: a PR rev...",
+          "html": "<div class=\"youtube-wrap\" id=\"youtube2-cmATJGbA8bI\"><div class=\"youtube-inner\"><...",
+          "lang": null,
+          "metrics": {},
+          "media": [
+            {
+              "type": "audio",
+              "url": "https://api.substack.com/feed/podcast/209721144/8b1a0bf9d96acb5647322082fce0d8eb...",
+              "expanded_url": null
+            }
+          ],
+          "urls": [],
+          "quoted": null,
+          "reply_to": null,
+          "repost_of": null,
+          "source": "substack-rss"
+        },
+        {
+          "id": "2002505078066056281",
+          "platform": "substack",
+          "url": "https://www.lennysnewsletter.com/p/what-if-youre-not-supposed-to-have",
+          "created_at": "2026-08-04T13:02:53Z",
+          "author": {
+            "id": null,
+            "username": "Molly Graham",
+            "name": "Molly Graham"
+          },
+          "title": "What if you\u2019re not supposed to have a long-term plan?",
+          "text": "The case for career emergence",
+          "html": "<p><em><span>&#128075; Hey there, I&#8217;m Lenny. Each week, I share deeply res...",
+          "lang": null,
+          "metrics": {},
+          "media": [
+            {
+              "type": "image",
+              "url": "https://substackcdn.com/image/fetch/$s_!IRuH!,f_auto,q_auto:good,fl_progressive:...",
+              "expanded_url": null
+            }
+          ],
+          "urls": [],
+          "quoted": null,
+          "reply_to": null,
+          "repost_of": null,
+          "source": "substack-rss"
+        },
+        {
+          "id": "2705107829770700692",
+          "platform": "substack",
+          "url": "https://www.lennysnewsletter.com/p/how-i-ai-chatgpt-codex-voice-browser",
+          "created_at": "2026-08-03T15:02:21Z",
+          "author": {
+            "id": null,
+            "username": "Lenny Rachitsky",
+            "name": "Lenny Rachitsky"
+          },
+          "title": "\ud83c\udf99\ufe0f How I AI: ChatGPT Codex Voice + browser + Sites: an expert\u2019s AI workflow | Ni...",
+          "text": "Your weekly listens from How I AI, part of the Lenny's Podcast Network",
+          "html": "<div class=\"captioned-image-container\"><figure><a class=\"image-link image2\" href...",
+          "lang": null,
+          "metrics": {},
+          "media": [
+            {
+              "type": "image",
+              "url": "https://substack-post-media.s3.amazonaws.com/public/images/d0b180ff-17e2-480a-b7...",
+              "expanded_url": null
+            }
+          ],
+          "urls": [],
+          "quoted": null,
+          "reply_to": null,
+          "repost_of": null,
+          "source": "substack-rss"
+        }
+      ],
+      "item": null,
+      "warnings": [],
+      "error": null
+    }
+  [PASS] Substack feed (custom domain) (0.7s)
 
 ============================================================
   Substack comments (API)
 ============================================================
-  3 comments from substack-comments
-  author: Gordon Strause
-  body: Too bad. I think Substack's policies are the right ones, and I think Casey's bel...
-  [PASS] Substack comments (API) (0.4s)
+  response:
+    {
+      "status": "ok",
+      "source": "substack-comments",
+      "engine_used": "http",
+      "items": [
+        {
+          "id": "47125539",
+          "platform": "substack",
+          "url": "https://platformer.substack.com/p/why-platformer-is-leaving-substack/comment/471...",
+          "created_at": null,
+          "author": {
+            "id": null,
+            "username": "gordonst",
+            "name": "Gordon Strause"
+          },
+          "title": null,
+          "text": "Too bad. I think Substack's policies are the right ones, and I think Casey's bel...",
+          "html": "Too bad. I think Substack's policies are the right ones, and I think Casey's bel...",
+          "lang": null,
+          "metrics": {
+            "reaction_count": 133,
+            "children_count": 2
+          },
+          "media": [],
+          "urls": [],
+          "quoted": null,
+          "reply_to": null,
+          "repost_of": null,
+          "source": "substack-comments"
+        },
+        {
+          "id": "47134911",
+          "platform": "substack",
+          "url": "https://platformer.substack.com/p/why-platformer-is-leaving-substack/comment/471...",
+          "created_at": null,
+          "author": {
+            "id": null,
+            "username": "samshepherd",
+            "name": "Sam"
+          },
+          "title": null,
+          "text": "I think the point is that these features haven\u2019t existed for all of that three y...",
+          "html": "I think the point is that these features haven\u2019t existed for all of that three y...",
+          "lang": null,
+          "metrics": {
+            "reaction_count": 27,
+            "children_count": 1
+          },
+          "media": [],
+          "urls": [],
+          "quoted": null,
+          "reply_to": "47125539",
+          "repost_of": null,
+          "source": "substack-comments"
+        },
+        {
+          "id": "47156981",
+          "platform": "substack",
+          "url": "https://platformer.substack.com/p/why-platformer-is-leaving-substack/comment/471...",
+          "created_at": null,
+          "author": {
+            "id": null,
+            "username": "gordonst",
+            "name": "Gordon Strause"
+          },
+          "title": null,
+          "text": "Fair point Sam. Notes is certainly a (relatively) new feature, though I don't th...",
+          "html": "Fair point Sam. Notes is certainly a (relatively) new feature, though I don't th...",
+          "lang": null,
+          "metrics": {
+            "reaction_count": 10,
+            "children_count": 0
+          },
+          "media": [],
+          "urls": [],
+          "quoted": null,
+          "reply_to": "47134911",
+          "repost_of": null,
+          "source": "substack-comments"
+        }
+      ],
+      "item": null,
+      "warnings": [],
+      "error": null
+    }
+  [PASS] Substack comments (API) (0.6s)
 
 ============================================================
   URL catch-all (X status)
 ============================================================
-  dispatched X status URL → syndication
-  text: git init qwen_devs
-
-README.md:
-Hey 👋 We're the folks from Qw...
+  response:
+    {
+      "status": "ok",
+      "source": "syndication",
+      "engine_used": "http",
+      "items": null,
+      "item": {
+        "id": "2084102417885585597",
+        "platform": "x",
+        "url": "https://x.com/QwenDevs/status/2084102417885585597",
+        "created_at": "2026-08-03T02:21:51Z",
+        "author": {
+          "id": "2077014085598941184",
+          "username": "QwenDevs",
+          "name": "Qwen Developers"
+        },
+        "title": null,
+        "text": "git init qwen_devs\n\nREADME.md:\nHey \ud83d\udc4b We're the folks from Qwen Foundation Model ...",
+        "html": null,
+        "lang": "en",
+        "metrics": {
+          "favorite_count": 401,
+          "conversation_count": 247
+        },
+        "media": [
+          {
+            "type": "photo",
+            "url": "https://pbs.twimg.com/media/HOw22UFbgAAxcdP.jpg",
+            "expanded_url": "https://x.com/QwenDevs/status/2084102417885585597/photo/1"
+          }
+        ],
+        "urls": [],
+        "quoted": null,
+        "reply_to": null,
+        "repost_of": null,
+        "source": "syndication"
+      },
+      "warnings": [],
+      "error": null
+    }
   [PASS] URL catch-all (X status) (0.1s)
 
 ============================================================
   URL catch-all (example.com)
 ============================================================
-  fetched example.com → title: Example Domain
-  [PASS] URL catch-all (example.com) (0.2s)
+  response:
+    {
+      "status": "ok",
+      "source": "web:web",
+      "engine_used": "http",
+      "items": null,
+      "item": {
+        "id": "709782467673261618",
+        "platform": "web",
+        "url": "https://example.com",
+        "created_at": null,
+        "author": {
+          "id": null,
+          "username": "example.com",
+          "name": null
+        },
+        "title": "Example Domain",
+        "text": "Example DomainExample DomainThis domain is for use in documentation examples wit...",
+        "html": "<!doctype html><html lang=\"en\"><head><title>Example Domain</title><link rel=\"ico...",
+        "lang": null,
+        "metrics": {},
+        "media": [],
+        "urls": [],
+        "quoted": null,
+        "reply_to": null,
+        "repost_of": null,
+        "source": "web:200"
+      },
+      "warnings": [],
+      "error": null
+    }
+  [PASS] URL catch-all (example.com) (0.1s)
 
 ============================================================
   Instance list
 ============================================================
-  8 instances (nitter.net first ✓)
+  response:
+    {
+      "instances": [
+        "nitter.net",
+        "xcancel.com",
+        "nitter.catsarch.com",
+        "nitter.tiekoetter.com",
+        "nitter.kareem.one",
+        "... (8 items total)"
+      ]
+    }
   [PASS] Instance list (0.0s)
 
 ============================================================
   Archive read
 ============================================================
-  archive hit: nitter:nitter.net
+  response:
+    {
+      "status": "ok",
+      "source": "nitter:nitter.net",
+      "engine_used": "http",
+      "items": [
+        {
+          "id": "2084665356703195433",
+          "platform": "x",
+          "url": "https://nitter.net/shuai_bai_/status/2084665356703195433#m",
+          "created_at": "2026-08-04T15:38:46Z",
+          "author": {
+            "id": null,
+            "username": "shuai_bai_",
+            "name": null
+          },
+          "title": null,
+          "text": "What does it really mean for an agent to be multimodal-native?\n\nIt should be mor...",
+          "html": "<p>What does it really mean for an agent to be multimodal-native?<br />\n<br />\nI...",
+          "lang": null,
+          "metrics": {},
+          "media": [],
+          "urls": [],
+          "quoted": null,
+          "reply_to": null,
+          "repost_of": {
+            "username": "QwenDevs",
+            "id": "2084665356703195433"
+          },
+          "source": "nitter:nitter.net"
+        },
+        {
+          "id": "2084866614605078747",
+          "platform": "x",
+          "url": "https://nitter.net/QwenDevs/status/2084866614605078747#m",
+          "created_at": "2026-08-05T04:58:30Z",
+          "author": {
+            "id": null,
+            "username": "QwenDevs",
+            "name": null
+          },
+          "title": null,
+          "text": "Hermes agent too!\n\n\nQwen (@Alibaba_Qwen)\n\nQwen3.8-Max is available in Hermes Age...",
+          "html": "<p>Hermes agent too!</p>\n<hr />\n<blockquote>\n<b>Qwen (@Alibaba_Qwen)</b>\n<p>\n<p>...",
+          "lang": null,
+          "metrics": {},
+          "media": [],
+          "urls": [],
+          "quoted": null,
+          "reply_to": null,
+          "repost_of": null,
+          "source": "nitter:nitter.net"
+        },
+        {
+          "id": "2084866408010412379",
+          "platform": "x",
+          "url": "https://nitter.net/QwenDevs/status/2084866408010412379#m",
+          "created_at": "2026-08-05T04:57:41Z",
+          "author": {
+            "id": null,
+            "username": "QwenDevs",
+            "name": null
+          },
+          "title": null,
+          "text": "You can now use Qwen3.8-Max on Cline!\n\n\nQwen (@Alibaba_Qwen)\n\nTry npm i -g cline...",
+          "html": "<p>You can now use Qwen3.8-Max on Cline!</p>\n<hr />\n<blockquote>\n<b>Qwen (@Aliba...",
+          "lang": null,
+          "metrics": {},
+          "media": [],
+          "urls": [],
+          "quoted": null,
+          "reply_to": null,
+          "repost_of": null,
+          "source": "nitter:nitter.net"
+        }
+      ],
+      "item": null,
+      "warnings": [],
+      "error": null
+    }
   [PASS] Archive read (0.0s)
 
 ────────────────────────────────────────────────────────────
-  13 passed | 0 failed | 13 total
+  14 passed | 0 failed | 14 total
 ────────────────────────────────────────────────────────────

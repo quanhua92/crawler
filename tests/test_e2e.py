@@ -133,8 +133,7 @@ def s_health(base: str, key: str | None):
     _check(status == 200, f"expected 200, got {status}")
     _check(isinstance(body, dict), "response should be JSON dict")
     _check(body.get("status") == "ok", f"status should be 'ok', got '{body.get('status')}'")
-    print(f"  engine={body.get('engine')} browser={body.get('browser_enabled')} "
-          f"archive={body.get('archive_enabled')} public={body.get('allow_public')}")
+    _show("response", body)
 
 
 def s_auth_required(base: str, key: str | None):
@@ -149,8 +148,10 @@ def s_auth_required(base: str, key: str | None):
     )
     if status == 401:
         print("  auth enforced: 401 without key ✓")
+        _show("response", body)
     else:
         print("  public mode: anonymous admitted (CRAWLER_ALLOW_PUBLIC=true)")
+        _show("response", body)
 
 
 def s_auth_page(base: str, key: str | None):
@@ -175,8 +176,7 @@ def s_x_feed(base: str, key: str | None):
         p = items[0]
         _check(p.get("platform") == "x", f"platform should be 'x', got '{p.get('platform')}'")
         _check(bool(p.get("id")), "post should have an id")
-        print(f"  {len(items)} posts from {body.get('source')}")
-        _show("first post", p)
+        _show("response", body)
     else:
         raise AssertionError(f"expected dict, got {type(body)}")
 
@@ -192,8 +192,7 @@ def s_x_post(base: str, key: str | None):
         _check(item is not None, "expected item")
         _check(item["author"]["username"] == "QwenDevs",
                f"author should be QwenDevs, got {item['author']['username']}")
-        print(f"  post by @{item['author']['username']}: {item['text'][:60]}...")
-        print(f"  metrics: {item.get('metrics', {})}")
+        _show("response", body)
 
 
 def s_x_thread(base: str, key: str | None):
@@ -203,7 +202,7 @@ def s_x_thread(base: str, key: str | None):
     if isinstance(body, dict):
         items = body.get("items") or []
         _check(len(items) >= 1, "expected at least 1 post in thread")
-        print(f"  thread depth: {len(items)} posts")
+        _show("response", body)
 
 
 def s_x_replies(base: str, key: str | None):
@@ -215,8 +214,7 @@ def s_x_replies(base: str, key: str | None):
         return
     _check(status in (200, 502), f"expected 200/502, got {status}")
     if status == 200 and isinstance(body, dict):
-        items = body.get("items") or []
-        print(f"  {len(items)} replies from {body.get('source')}")
+        _show("response", body)
 
 
 def s_substack_feed_native(base: str, key: str | None):
@@ -227,8 +225,7 @@ def s_substack_feed_native(base: str, key: str | None):
         items = body.get("items") or []
         _check(len(items) > 0, "expected at least 1 post")
         _check(items[0]["platform"] == "substack", "platform should be substack")
-        print(f"  {len(items)} posts from {body.get('source')}")
-        _show("first post title", items[0].get("title", ""))
+        _show("response", body)
 
 
 def s_substack_feed_custom(base: str, key: str | None):
@@ -238,7 +235,7 @@ def s_substack_feed_custom(base: str, key: str | None):
     if isinstance(body, dict):
         items = body.get("items") or []
         _check(len(items) > 0, "expected at least 1 post (custom domain fallback)")
-        print(f"  {len(items)} posts from {body.get('source')}")
+        _show("response", body)
 
 
 def s_substack_comments(base: str, key: str | None):
@@ -252,11 +249,7 @@ def s_substack_comments(base: str, key: str | None):
     if isinstance(body, dict):
         items = body.get("items") or []
         _check(len(items) > 0, "expected at least 1 comment")
-        print(f"  {len(items)} comments from {body.get('source')}")
-        if items:
-            c = items[0]
-            print(f"  author: {c.get('author', {}).get('name', '?')}")
-            print(f"  body: {(c.get('text') or '')[:80]}...")
+        _show("response", body)
 
 
 def s_url_x(base: str, key: str | None):
@@ -269,8 +262,7 @@ def s_url_x(base: str, key: str | None):
                f"status should be ok/partial, got '{body.get('status')}'")
         item = body.get("item")
         _check(item is not None, "expected item from X URL")
-        print(f"  dispatched X status URL → {body.get('source')}")
-        print(f"  text: {item.get('text', '')[:60]}...")
+        _show("response", body)
 
 
 def s_url_web(base: str, key: str | None):
@@ -285,7 +277,7 @@ def s_url_web(base: str, key: str | None):
         if item:
             _check("Example Domain" in (item.get("title") or ""),
                    "expected 'Example Domain' title")
-            print(f"  fetched example.com → title: {item.get('title')}")
+            _show("response", body)
 
 
 def s_instances(base: str, key: str | None):
@@ -296,7 +288,7 @@ def s_instances(base: str, key: str | None):
         instances = body.get("instances") or []
         _check(len(instances) > 0, "expected at least 1 instance")
         _check(instances[0] == "nitter.net", "nitter.net should be first")
-        print(f"  {len(instances)} instances (nitter.net first ✓)")
+        _show("response", body)
 
 
 def s_archive(base: str, key: str | None):
@@ -305,7 +297,7 @@ def s_archive(base: str, key: str | None):
     # 200 = archived data exists; 404 = not archived yet; 503 = S3 not configured
     _check(status in (200, 404, 503), f"expected 200/404/503, got {status}")
     if status == 200:
-        print(f"  archive hit: {body.get('source', '?')}")
+        _show("response", body)
     elif status == 404:
         print("  not archived yet (run /x/QwenDevs first, then retry)")
     else:
