@@ -1,0 +1,57 @@
+[project]
+name = "crawler"
+version = "0.1.0"
+description = "Self-hostable, best-effort content fetcher for X, Substack, and any URL."
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.11"
+authors = [{ name = "crawler contributors" }]
+keywords = ["crawler", "nitter", "twitter", "substack", "fastapi", "r.jina.ai"]
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Framework :: FastAPI",
+    "Programming Language :: Python :: 3",
+]
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.32",
+    "python-multipart>=0.0.9",
+    "httpx>=0.27",
+    "feedparser>=6.0",
+    "pydantic>=2.9",
+    "pydantic-settings>=2.6",
+    "itsdangerous>=2.2",
+    "camoufox[geoip]>=0.4",
+    "patchright>=1.40",
+    "browserforge>=0.2",
+    "boto3>=1.35",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8",
+    "pytest-asyncio>=0.24",
+    "ruff>=0.7",
+    "httpx", # for TestClient
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["app"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["E501"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]

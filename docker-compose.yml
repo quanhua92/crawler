@@ -1,0 +1,73 @@
+# crawler — standalone docker-compose.
+#
+# Bring up (crawler + RustFS S3):
+#   docker compose up -d --build
+#
+# Tear down:
+#   docker compose down
+#   docker compose down -v   # wipe S3 data (dev only)
+
+services:
+  # ── Crawler API ────────────────────────────────────────────
+  crawler:
+    build: .
+    container_name: crawler
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      # Docker-network S3 endpoint (overrides .env which may use localhost)
+      CRAWLER_S3_ENDPOINT: http://rustfs:9000
+    ports:
+      - "0.0.0.0:8000:8000"
+    depends_on:
+      rustfs:
+        condition: service_healthy
+    shm_size: 1g
+    mem_limit: 2g
+
+  # ── RustFS (S3-compatible object storage for the archive) ──
+  rustfs:
+    image: rustfs/rustfs:latest
+    container_name: crawler-rustfs
+    restart: unless-stopped
+    security_opt:
+      - "no-new-privileges:true"
+    environment:
+      RUSTFS_VOLUMES: /data
+      RUSTFS_ADDRESS: 0.0.0.0:9000
+      RUSTFS_CONSOLE_ADDRESS: 0.0.0.0:9001
+      RUSTFS_CONSOLE_ENABLE: "true"
+      RUSTFS_ACCESS_KEY: rustfsadmin
+      RUSTFS_SECRET_KEY: rustfsadmin
+      RUSTFS_UNSAFE_BYPASS_DISK_CHECK: "true"
+      RUSTFS_OBS_LOGGER_LEVEL: info
+    ports:
+      - "0.0.0.0:9000:9000"
+      - "0.0.0.0:9001:9001"   # web console
+    volumes:
+      - crawler_rustfs:/data
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:9000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # ── One-shot: create crawler bucket in RustFS ──────────────
+  rustfs-init:
+    image: minio/mc:latest
+    container_name: crawler-rustfs-init
+    depends_on:
+      rustfs:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+      /usr/bin/mc alias set local http://rustfs:9000 rustfsadmin rustfsadmin;
+      /usr/bin/mc mb --ignore-existing local/crawler;
+      exit 0;
+      "
+    restart: "no"
+
+volumes:
+  crawler_rustfs:
+    name: crawler_rustfs
